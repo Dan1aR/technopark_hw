@@ -1,9 +1,7 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #define START_ARRAY_CONST 4
-
-typedef enum { false, true } bool;
 
 struct Company {
     char *document_type;
@@ -12,13 +10,13 @@ struct Company {
     int day;
     int mounth;
     int year;
-    bool add_agreements;
+    int add_agreements;
     double add_agreements_value;
 };
 
 typedef struct Company Cmp_obj;
 
-Cmp_obj Company_new(char *_document_type, double _value, char *_counterparty_name, unsigned int _day, unsigned int _mounth, unsigned int _year, bool _add_agreements, double _add_agreements_value) {
+Cmp_obj Company_new(char *_document_type, double _value, char *_counterparty_name, unsigned int _day, unsigned int _mounth, unsigned int _year, int _add_agreements, double _add_agreements_value) {
     Cmp_obj p;
 
     p.document_type = malloc(sizeof(_document_type));
@@ -61,7 +59,7 @@ void clear_array(cmp_obj_array *cmp) {
     cmp->buffer_size = cmp->size = 0;
 }
 
-void add_el(cmp_obj_array *cmp ,char *_document_type, double _value, char *_counterparty_name, unsigned int _day, unsigned int _mounth, unsigned int _year, bool _add_agreements, double _add_agreements_value) {
+void add_el(cmp_obj_array *cmp ,char *_document_type, double _value, char *_counterparty_name, unsigned int _day, unsigned int _mounth, unsigned int _year, int _add_agreements, double _add_agreements_value) {
     if (cmp->size == cmp->buffer_size) {
         cmp->buffer_size *= 2;
         cmp->arr = realloc(cmp->arr, cmp->buffer_size * sizeof(Cmp_obj));

@@ -38,7 +38,7 @@ void add_info(cmp_obj_array *cmp) {
     }
 
     printf(">>> Есть ли дополнительные соглашения? [1 - да/0 - нет]: ");
-    bool _ag;
+    int _ag;
     scanf("%d", &_ag);
     double _agv = 0;
     if (_ag) {
