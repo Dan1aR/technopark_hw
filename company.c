@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #define START_ARRAY_CONST 4
-#define STR_CONST
 
 typedef enum { false, true } bool;
 
@@ -21,16 +20,22 @@ typedef struct Company Cmp_obj;
 
 Cmp_obj Company_new(char *_document_type, double _value, char *_counterparty_name, unsigned int _day, unsigned int _mounth, unsigned int _year, bool _add_agreements, double _add_agreements_value) {
     Cmp_obj p;
+
     p.document_type = malloc(sizeof(_document_type));
     strcpy(p.document_type, _document_type);
+
     p.value = _value;
+
     p.counterparty_name = malloc(sizeof(_counterparty_name));
     strcpy(p.counterparty_name, _counterparty_name);
+
     p.day = _day;
     p.mounth = _mounth;
     p.year = -_year;
+
     p.add_agreements = _add_agreements;
     p.add_agreements_value = _add_agreements_value;
+
     return p;
 }
 
@@ -70,5 +75,41 @@ void show_arr(cmp_obj_array *cmp) {
     for (int i = 0; i < cmp->size; ++i) {
         printf(">>> %s - %f \n", cmp->arr[i].counterparty_name, cmp->arr[i].value);
     }
+}
+
+static void insert_value_in_max(int *max_idx, double *max_vls, double val, int idx) {
+    if (val > max_vls[2]) {
+        max_vls[0] = max_vls[1];
+        max_idx[0] = max_idx[1];
+
+        max_vls[1] = max_vls[2];
+        max_idx[1] = max_idx[2];
+
+        max_vls[2] = val;
+        max_idx[2] = idx;
+    }
+    else if (val > max_vls[1]) {
+        max_vls[0] = max_vls[1];
+        max_idx[0] = max_idx[1];
+
+        max_vls[1] = val;
+        max_idx[1] = idx;
+    }
+    else if (val > max_vls[0]) {
+        max_vls[0] = val;
+        max_idx[0] = idx;
+    }
+}
+
+void find_three_max_counterparty(cmp_obj_array *cmp, int *max_indexes) {
+    max_indexes[0] = -1;
+    max_indexes[1] = -1;
+    max_indexes[2] = -1;
+    double max_values[3] = {0, 0, 0};
+
+    for (int i = 0; i < cmp->size; ++i) {
+        insert_value_in_max(max_indexes, max_values, cmp->arr[i].value + cmp->arr[i].add_agreements_value, i);
+    }
+    //printf("%d %d %d \n", max_indexes[0], max_indexes[1], max_indexes[2]);
 }
 
