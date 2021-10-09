@@ -21,11 +21,21 @@ add_library(company STATIC ${LIB_SOURCE_FILES})
 add_executable(main main.c)
 target_link_libraries(main company)
 
-enable_testing()
-include(GoogleTest)
-find_package(GTest REQUIRED)
+option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
 
-include_directories(${GTEST_INCLUDE_DIRS})
-add_executable(company_test company_test.cpp)
-target_link_libraries(company_test ${GTEST_LIBRARIES} company)
-gtest_add_tests(TARGET company_test)
+if (BUILD_TESTS)
+    add_subdirectory(ext/googletest)
+
+    enable_testing()
+
+    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+    include(GoogleTest)
+    find_package(GTest REQUIRED)
+
+    include_directories(${GTEST_INCLUDE_DIRS})
+    add_executable(company_test company_test.cpp)
+    target_link_libraries(company_test ${GTEST_LIBRARIES} company)
+    gtest_add_tests(TARGET company_test)
+
+endif()
