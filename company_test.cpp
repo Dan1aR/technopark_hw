@@ -60,18 +60,14 @@ TEST(COMPANY_TEST, Assert_5) {
 /*
 TEST(MAIN_TEST, Asser_6) {
     ::testing::internal::CaptureStdout();
-
     cmp_obj_array cmp = create_array();
     char tp[3] = "t1";
     char nm[3] = "n1";
-
     add_el(&cmp, tp, 125, nm, 6, 12, 2001, 0, 0);
     add_el(&cmp, tp, 123, nm, 6, 12, 2001, 0, 0);
     add_el(&cmp, tp, 105, nm, 6, 12, 2001, 0, 0);
-
     ASSERT_DEATH(interract(2, &cmp), "");
     std::string capturedStdout = ::testing::internal::GetCapturedStdout().c_str();
-
     std::string ans = std::string("Самые ценные контрагенты:\n") + \
         std::string("Имя - Сумма Договора - Сумма Дополнительных соглашений\n") + \
         std::string(nm) + std::string(" - 125.00 - 0.00 \n") + \

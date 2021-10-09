@@ -2,24 +2,6 @@ cmake_minimum_required(VERSION 3.16)
 
 project(test)
 
-if ("${TARGET_CPU}" STREQUAL "amd64")
-    set (CMAKE_SIZEOF_VOID_P 8)
-
-    set_property (GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
-    set_property (GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS FALSE)
-elseif ("${TARGET_CPU}" STREQUAL "x86")
-    set (CMAKE_SIZEOF_VOID_P 4)
-
-    set_property (GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS FALSE)
-    set_property (GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS TRUE)
-
-    if (GCC)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
-        set (CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -m32")
-    endif ()
-
-endif ()
-
 # TESTING TERMINAL (from .build/)
 #cmake -DCMAKE_BUILD_TYPE=PROFILE ..
 #make
@@ -40,8 +22,10 @@ add_executable(main main.c)
 target_link_libraries(main company)
 
 enable_testing()
+include(GoogleTest)
 find_package(GTest REQUIRED)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(company_test company_test.cpp)
 target_link_libraries(company_test ${GTEST_LIBRARIES} company)
+gtest_add_tests(TARGET company_test)

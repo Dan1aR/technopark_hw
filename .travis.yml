@@ -1,66 +1,84 @@
-dist: trusty
-sudo: required
-
 language: cpp
 
-os:
-    # будем прогонять CI и на Linux, и на Mac OS X...
-    #- linux
-    - osx
-
-compiler:
-    # ... и с помощью GCC, и Clang
-    - gcc
-    - clang
-
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports
-    packages:
-      - cmake-data
-      - cmake
-
 env:
-    # список переменных окружения, влияющих на матрицу сборки:
-    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
-    - TARGET_CPU=amd64 BUILD_CONFIGURATION=Release
-    - TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
-    - TARGET_CPU=x86 BUILD_CONFIGURATION=Release
+  global:
+    # Ubuntu version
+    - LINUX_DIST=bionic
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    # Global build options and C++ flags
+    - CXX_FLAGS="-Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
+    # Misc
+    - RUN_TESTS=true
+    - COVERAGE=false
 
 matrix:
-    exclude:
-        # вручную исключим ненужные элементы из матрицы сборки:
-        - os:       osx
-          compiler: gcc
+  include:
+    - os: linux
+      dist: bionic
+      sudo: true
+      compiler:
+        - gcc
+      addons:
+       apt:
+         packages: 
+           - gcc-7
+           - g++-7
+           - valgrind
+           # Misc
+           - python-yaml
+           - lcov
+           - libopencv-dev
+         sources: 
+           - ubuntu-toolchain-r-test
+             #    - os: linux
+             #      dist: bionic
+             #      sudo: true
+             #      compiler:
+             #        - clang
+             #      addons:
+             #       apt:
+             #         packages: 
+             #           - clang-6.0
+             #           - valgrind
+             #           # Misc
+             #           - python-yaml
+             #           - lcov
+             #           - libopencv-dev
+             #         sources: 
+             #           - ubuntu-toolchain-r-test
+    
+before_install:
+    # Combine global build options with OS/compiler-dependent options
+    - export CMAKE_OPTIONS=${CMAKE_OPTIONS}" "${ENV_CMAKE_OPTIONS}
+    - export CXX_FLAGS=${CXX_FLAGS}" "${ENV_CXX_FLAGS}
 
-        - os:  osx
-          env: TARGET_CPU=x86 BUILD_CONFIGURATION=Debug
-
-        - os:  osx
-          env: TARGET_CPU=x86 BUILD_CONFIGURATION=Release
-
-#install:
-    # скрипт настройки среды и установки зависимостей:
-    #- source ci/travis/install-$TRAVIS_OS_NAME.sh
+install:
+    - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-6.0" CC="clang-6.0"; fi
+    - echo ${PATH}
+    - echo ${CXX}
+    - ${CXX} --version
+    - ${CXX} -v
+    - sudo pip install codecov
+    
+    # Download and install recent cmake
+    - |
+      if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then
+        CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.20.2/cmake-3.20.2-linux-x86_64.tar.gz"
+        mkdir -p ${DEPS_DIR}/cmake
+        travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${DEPS_DIR}/cmake
+        export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+      fi
 
 script:
-    # скрипт сборки и тестирования проекта:
-    - mkdir build
-    - cd build
-    - cmake ..
-    - make
-    - ./company_test
+    ############################################################################
+    # Build main and tests
+    ############################################################################
+     - mkdir -p build
+     - cd build
+     - cmake -DCMAKE_BUILD_TYPE=PROFILE .. 
+     - make
+     - ctest
 
-deploy:
-    # выкладываем tagged-коммиты на GitHub Releases:
-    provider:     releases
-    file:         <package-file>
-    skip_cleanup: true
-    overwrite:    true
 
-    api_key:
-        secure:   <encrypted-github-token>
-
-    on:
-        tags:     true
+after_success:
+    - gcovr -r .. . --html --html-details -o example-html-details.html

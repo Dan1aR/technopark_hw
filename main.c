@@ -47,18 +47,15 @@ void add_info(cmp_obj_array *cmp) {
     }
 
     add_el(cmp, _dc, _v, _cn, tm.tm_mday, tm.tm_mon, tm.tm_year, _ag, _agv);
-    //printf("HERE :: %s\n", cmp->arr[cmp->size-1].counterparty_name);
 }
 
 int interract(int user_command, cmp_obj_array *cmp) {
     if (user_command == 1) {
         add_info(cmp);
-        //printf("HERE :: %s - %2f - %d\n", cmp.arr[cmp.size-1].counterparty_name, cmp.arr[cmp.size-1].value, cmp.arr[cmp.size-1].day);
     }
     else if (user_command == 2) {
         int *max_idx = (int*)malloc(3*sizeof(int));
         find_three_max_counterparty(cmp, max_idx);
-        //printf("1) %d %d %d\n", max_idx[0], max_idx[1], max_idx[2]);
         
         printf("Самые ценные контрагенты:\n");
         printf("Имя - Сумма Договора - Сумма Дополнительных соглашений\n");
@@ -66,8 +63,6 @@ int interract(int user_command, cmp_obj_array *cmp) {
             printf("%s - %2f - %2f \n", cmp->arr[max_idx[2]].counterparty_name, cmp->arr[max_idx[2]].value, cmp->arr[max_idx[2]].add_agreements_value);
         }
         if (max_idx[1] != -1) {
-            //printf("2) %d %d %d\n", max_idx[0], max_idx[1], max_idx[2]);
-            //printf("HERE\n");
             printf("%s - %2f - %2f \n", cmp->arr[max_idx[1]].counterparty_name, cmp->arr[max_idx[1]].value, cmp->arr[max_idx[1]].add_agreements_value);
         }
         if (max_idx[0] != -1) {
@@ -99,6 +94,5 @@ int main () {
             break;
     }
 
-    clear_array(&cmp);
-       
+    clear_array(&cmp); 
 }
