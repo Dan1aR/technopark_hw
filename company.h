@@ -25,6 +25,6 @@ struct cmp_obj_array_struct {
 cmp_obj_array create_array();
 void clear_array(cmp_obj_array*);
 void add_el(cmp_obj_array* ,char*, double, char*, unsigned int, unsigned int, unsigned int, int, double);
-void show_arr(cmp_obj_array*);
+//void show_arr(cmp_obj_array*);
 int* find_three_max_counterparty(cmp_obj_array*, int*);
 
