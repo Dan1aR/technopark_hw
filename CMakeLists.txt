@@ -1,24 +1,26 @@
-cmake_minimum_required(VERSION 3.16)
-
-project(test)
-
-include(ExternalProject)
-ExternalProject_Add(googletest
-    GIT_REPOSITORY https://github.com/google/googletest.git
-    GIT_TAG master
-    SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-src"
-    BINARY_DIR "${CMAKE_BINARY_DIR}/googletest-build"
-    CONFIGURE_COMMAND ""
-    BUILD_COMMAND ""
-    INSTALL_COMMAND ""
-    TEST_COMMAND ""
-)
-
 # TESTING TERMINAL (from .build/)
 #cmake -DCMAKE_BUILD_TYPE=PROFILE ..
 #make
 #./company_test
 #gcovr -r .. . --html --html-details -o example-html-details.html
+
+
+cmake_minimum_required(VERSION 3.16)
+
+project(test)
+
+include(DownloadProject.cmake)
+download_project(PROJ                googletest
+                 GIT_REPOSITORY      https://github.com/google/googletest.git
+                 GIT_TAG             master
+                 ${UPDATE_DISCONNECTED_IF_AVAILABLE}
+)
+
+# Prevent GoogleTest from overriding our compiler/linker options
+# when building with Visual Studio
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 
 # This flags are used if cmake is called with -DCMAKE_BUILD_TYPE=PROFILE
 set(CMAKE_C_FLAGS_PROFILE --coverage)
@@ -36,19 +38,12 @@ target_link_libraries(main company)
 option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
 
 if (BUILD_TESTS)
-    add_subdirectory(googletest)
-
     enable_testing()
-
-    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
     include(GoogleTest)
     add_executable(company_test company_test.cpp)
 
-    find_package(GTest REQUIRED)
-    include_directories(${GTEST_INCLUDE_DIRS})
-
-    target_link_libraries(company_test ${GTEST_LIBRARIES} company)
+    target_link_libraries(company_test gtest company)
     gtest_add_tests(TARGET company_test)
 
 endif()
