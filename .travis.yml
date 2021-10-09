@@ -5,14 +5,14 @@ language: cpp
 
 os:
     # будем прогонять CI и на Linux, и на Mac OS X...
-    - linux
+    #- linux
     - osx
 
 compiler:
     # ... и с помощью GCC, и Clang
     - gcc
     - clang
-    
+
 env:
     # список переменных окружения, влияющих на матрицу сборки:
     - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
@@ -32,9 +32,9 @@ matrix:
         - os:  osx
           env: TARGET_CPU=x86 BUILD_CONFIGURATION=Release
 
-install:
+#install:
     # скрипт настройки среды и установки зависимостей:
-    - source ci/travis/install-$TRAVIS_OS_NAME.sh
+    #- source ci/travis/install-$TRAVIS_OS_NAME.sh
 
 script:
     # скрипт сборки и тестирования проекта:
