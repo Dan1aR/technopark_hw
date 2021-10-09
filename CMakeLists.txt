@@ -2,6 +2,18 @@ cmake_minimum_required(VERSION 3.16)
 
 project(test)
 
+include(ExternalProject)
+ExternalProject_Add(googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG master
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/googletest-src"
+    BINARY_DIR "${CMAKE_BINARY_DIR}/googletest-build"
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    TEST_COMMAND ""
+)
+
 # TESTING TERMINAL (from .build/)
 #cmake -DCMAKE_BUILD_TYPE=PROFILE ..
 #make
@@ -31,10 +43,11 @@ if (BUILD_TESTS)
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
     include(GoogleTest)
-    find_package(GTest REQUIRED)
-
-    include_directories(${GTEST_INCLUDE_DIRS})
     add_executable(company_test company_test.cpp)
+
+    find_package(GTest REQUIRED)
+    include_directories(${GTEST_INCLUDE_DIRS})
+
     target_link_libraries(company_test ${GTEST_LIBRARIES} company)
     gtest_add_tests(TARGET company_test)
 
