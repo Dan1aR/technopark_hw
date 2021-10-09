@@ -13,6 +13,14 @@ compiler:
     - gcc
     - clang
 
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake-data
+      - cmake
+
 env:
     # список переменных окружения, влияющих на матрицу сборки:
     - TARGET_CPU=amd64 BUILD_CONFIGURATION=Debug
