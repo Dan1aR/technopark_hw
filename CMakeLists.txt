@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(test)
 
-include(DownloadProject.cmake)
+include(Downloadproject.cmake)
 download_project(PROJ                googletest
                  GIT_REPOSITORY      https://github.com/google/googletest.git
                  GIT_TAG             master
