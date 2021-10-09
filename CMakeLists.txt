@@ -24,7 +24,7 @@ target_link_libraries(main company)
 option(BUILD_TESTS "Build all tests." OFF) # Makes boolean 'test' available.
 
 if (BUILD_TESTS)
-    add_subdirectory(ext/googletest)
+    add_subdirectory(googletest)
 
     enable_testing()
 
