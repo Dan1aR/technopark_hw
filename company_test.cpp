@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-#include <string>
-#include <stdio.h>
+#include <cstring>
 
 #include "company.c"
 
