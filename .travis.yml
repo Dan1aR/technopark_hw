@@ -10,10 +10,10 @@ sudo:     required  # используем Virtual Machine (а не Docker conta
 language: cpp
 
 addons:
-  artifacts: true
   apt:
     packages:
       - valgrind
+      - lcov
 
 env:
   global:
@@ -73,9 +73,9 @@ install:
     - echo ${CXX}
     - ${CXX} --version
     - ${CXX} -v
-    - sudo apt-get install valgrind
-    - sudo apt-get install gcovr
-    - sudo apt-get install clang-format
+    - apt-get install valgrind
+    - apt-get install gcovr
+    - apt-get install clang-format
     
     # Download and install recent cmake
     - |
@@ -98,6 +98,12 @@ script:
      - gcovr -r .. -e ../build/ --html --html-details -o coverage.html
      - cd ..
      - clang-format -i -style=Google *.cpp *.h *.c
-#after_success:
-   
-  
+     
+
+after_success:
+# Create lcov report
+- lcov --capture --directory . --output-file coverage.info
+- lcov --remove coverage.info '/build/*' --output-file coverage.info # filter system-files
+- lcov --list coverage.info # debug info
+# Uploading report to CodeCov
+- bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
