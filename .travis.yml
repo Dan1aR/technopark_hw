@@ -95,7 +95,7 @@ script:
      - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
      - make
      - valgrind --tool=memcheck --leak-check=full ctest
-     - gcovr -r .. -e ../build/ --html --html-details -o coverage.html
+     - gcovr -r .. -e ../.build/ --html --html-details -o coverage.html
      - cd ..
      - clang-format -i -style=Google *.cpp *.h *.c
      
@@ -103,7 +103,7 @@ script:
 after_success:
 # Create lcov report
 - lcov --capture --directory . --output-file coverage.info
-- lcov --remove coverage.info '/build/*' --output-file coverage.info # filter system-files
+- lcov --remove coverage.info '/.build/*' --output-file coverage.info # filter system-files
 - lcov --list coverage.info # debug info
 # Uploading report to CodeCov
 - bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"
