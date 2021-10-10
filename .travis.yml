@@ -9,6 +9,11 @@ dist:     trusty    # используем Ubuntu 14.04 Trusty Tahr (а не 12.
 sudo:     required  # используем Virtual Machine (а не Docker container)
 language: cpp
 
+addons:
+  apt:
+    packages:
+      - valgrind
+
 env:
   global:
     # Ubuntu version
@@ -67,9 +72,7 @@ install:
     - echo ${CXX}
     - ${CXX} --version
     - ${CXX} -v
-    - sudo pip install codecov
     - sudo apt-get install valgrind
-    - sudo apt-get install gcovr
     
     # Download and install recent cmake
     - |
@@ -88,7 +91,8 @@ script:
      - cd .build/
      - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
      - make
-     - ctest -T memcheck
+     - cppcheck --quiet --error-exitcode=1 .
+     - valgrind --leak-check=yes ctest
 
 
 after_success:
