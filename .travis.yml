@@ -74,6 +74,7 @@ install:
     - ${CXX} -v
     - sudo apt-get install valgrind
     - sudo apt-get install gcovr
+    - sudo apt-get install clang-format
     
     # Download and install recent cmake
     - |
@@ -93,6 +94,8 @@ script:
      - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
      - make
      - valgrind --tool=memcheck --leak-check=full ctest
+     - cd ..
+     - clang-format -i -style=WebKit *.cpp *.h *.c
 
 
 after_success:
