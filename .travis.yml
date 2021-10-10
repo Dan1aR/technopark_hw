@@ -73,6 +73,7 @@ install:
     - ${CXX} --version
     - ${CXX} -v
     - sudo apt-get install valgrind
+    - sudo apt-get install gcovr
     
     # Download and install recent cmake
     - |
@@ -91,8 +92,7 @@ script:
      - cd .build/
      - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
      - make
-     - cppcheck --quiet --error-exitcode=1 .
-     - valgrind --leak-check=yes ctest
+     - valgrind --tool=memcheck --leak-check=full ctest
 
 
 after_success:
