@@ -73,9 +73,9 @@ install:
     - echo ${CXX}
     - ${CXX} --version
     - ${CXX} -v
-    - apt-get install valgrind
-    - apt-get install gcovr
-    - apt-get install clang-format
+    - sudo apt-get install valgrind
+    - sudo apt-get install gcovr
+    - sudo apt-get install clang-format
     
     # Download and install recent cmake
     - |
