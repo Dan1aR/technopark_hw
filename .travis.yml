@@ -10,6 +10,7 @@ sudo:     required  # используем Virtual Machine (а не Docker conta
 language: cpp
 
 addons:
+  artifacts: true
   apt:
     packages:
       - valgrind
@@ -94,9 +95,9 @@ script:
      - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
      - make
      - valgrind --tool=memcheck --leak-check=full ctest
+     - gcovr -r .. -e ../build/ --html --html-details -o coverage.html
      - cd ..
-     - clang-format -i -style=WebKit *.cpp *.h *.c
-
-
-after_success:
-    - gcovr -r .. -e ../build/ --html --html-details -o coverage.html
+     - clang-format -i -style=Google *.cpp *.h *.c
+#after_success:
+   
+  
