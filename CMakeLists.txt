@@ -1,10 +1,3 @@
-# TESTING TERMINAL (from .build/)
-#cmake -DCMAKE_BUILD_TYPE=PROFILE ..
-#make
-#./company_test
-#gcovr -r .. . --html --html-details -o example-html-details.html
-
-
 cmake_minimum_required(VERSION 3.16)
 
 project(test)

@@ -1,3 +1,10 @@
+# TESTING TERMINAL (from .build/)
+#cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
+#make
+#ctest
+#gcovr -r .. -e ./googletest-src/ -e ../build/ --html --html-details -o example-html-details.html
+
+
 dist:     trusty    # используем Ubuntu 14.04 Trusty Tahr (а не 12.02 Precise Pangolin)
 sudo:     required  # используем Virtual Machine (а не Docker container)
 language: cpp
@@ -61,6 +68,8 @@ install:
     - ${CXX} --version
     - ${CXX} -v
     - sudo pip install codecov
+    - sudo apt-get install valgrind
+    - sudo apt-get install gcovr
     
     # Download and install recent cmake
     - |
@@ -79,8 +88,8 @@ script:
      - cd .build/
      - cmake -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
      - make
-     - ctest
+     - ctest -T memcheck
 
 
 after_success:
-    - gcovr -r .. . --html --html-details -o example-html-details.html
+    - gcovr -r .. -e ../build/ --html --html-details -o coverage.html
