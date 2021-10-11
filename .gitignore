@@ -5,3 +5,4 @@ build/
 ext/
 googletest/
 .gitmodules/
+teminal_commands.txt
