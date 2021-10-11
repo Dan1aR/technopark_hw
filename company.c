@@ -1,8 +1,8 @@
-#include "company.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "company.h"
 
 #define START_ARRAY_CONST 4
 #define ERROR_CODE -1
@@ -115,5 +115,4 @@ void find_three_max_counterparty(cmp_obj_array* cmp, int* max_indexes) {
                         cmp->arr[i].value + cmp->arr[i].add_agreements_value,
                         i);
   }
-  // printf("%d %d %d \n", max_indexes[0], max_indexes[1], max_indexes[2]);
 }

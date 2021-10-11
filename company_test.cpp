@@ -2,9 +2,10 @@ extern "C" {
 #include "company.c"
 }
 
+#include <cstring>
 #include <gtest/gtest.h>
 
-#include <cstring>
+//#include <cstring>
 
 TEST(COMPANY_TEST, Assert_1) {
   cmp_obj_array cmp = create_array();
