@@ -14,7 +14,6 @@ typedef struct {
 Cmp_obj Company_new(char*, double, char*, unsigned int, unsigned int,
                     unsigned int, int, double);
 
-
 typedef struct {
   Cmp_obj* arr;
   size_t buffer_size;

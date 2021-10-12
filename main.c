@@ -72,12 +72,12 @@ int interract(int user_command, cmp_obj_array* cmp) {
   if (user_command == 1) {
     int exit_code = add_info(cmp);
     if (exit_code == ERROR_CODE) {
-      return 0;
+      return ERROR_CODE;
     }
   } else if (user_command == 2) {
     int exit_code = show_three_max_counterparty(cmp);
     if (exit_code == ERROR_CODE) {
-      return 0;
+      return ERROR_CODE;
     }
   } else if (user_command == 0) {
     return 0;
@@ -87,11 +87,11 @@ int interract(int user_command, cmp_obj_array* cmp) {
   return 1;
 }
 
-void run() {
+int run() {
   cmp_obj_array cmp = create_array();
   if (cmp.buffer_size == 0) {
     printf("malloc return NULL\n");
-    return;
+    return ERROR_CODE;
   }
 
   printf("\t\t\tБаза данных с Информацией о договорах\n");
@@ -100,15 +100,17 @@ void run() {
   while (user_command) {
     ui();
     scanf("%d", &user_command);
-    if (!interract(user_command, &cmp)) {
-      break;
+    int exit_code = interract(user_command, &cmp);
+    if (exit_code == ERROR_CODE) {
+      clear_array(&cmp);
+      return exit_code;
     }
   }
 
   clear_array(&cmp);
+  return 0;
 }
 
 int main() {
-  run();
-  return 0;
+  return run();
 }

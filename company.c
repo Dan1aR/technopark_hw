@@ -17,6 +17,9 @@ Cmp_obj Company_new(char* _document_type, double _value,
   p.document_type = (char*)malloc(sizeof(_document_type));
   if (!p.document_type) {
     printf("malloc return NULL\n");
+    Cmp_obj err_struct;
+    err_struct.document_type = NULL;
+    return err_struct;
   }
   strcpy(p.document_type, _document_type);
 
@@ -25,6 +28,9 @@ Cmp_obj Company_new(char* _document_type, double _value,
   p.counterparty_name = (char*)malloc(sizeof(_counterparty_name));
   if (!p.counterparty_name) {
     printf("malloc return NULL\n");
+    Cmp_obj err_struct;
+    err_struct.counterparty_name = NULL;
+    return err_struct;
   }
   strcpy(p.counterparty_name, _counterparty_name);
 
@@ -105,7 +111,7 @@ static void insert_value_in_max(int* max_idx, double* max_vls, double val,
 
 void find_three_max_counterparty(cmp_obj_array* cmp, int* max_indexes) {
   double max_values[MAX_IDX_SIZE];
-  for (int i = 0; i < MAX_IDX_SIZE; ++i) {
+  for (size_t i = 0; i < MAX_IDX_SIZE; ++i) {
     max_indexes[i] = -1;
     max_values[i] = 0;
   }
