@@ -35,7 +35,7 @@ set(C_FLAGS "-std=gnu11 -Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-
 set(CMAKE_CXX_FLAGS ${CPP_FLAGS})
 set(CMAKE_C_FLAGS ${C_FLAGS})
 
-set(LIB_SOURCE_FILES company.c io.c)
+set(LIB_SOURCE_FILES company.c)
 add_library(company STATIC ${LIB_SOURCE_FILES})
 
 # Build main

@@ -4,10 +4,17 @@
 #include <time.h>
 
 #include "company.h"
-#include "io.h"
 
 #define STR_CONST_LEN 255
 #define ERROR_CODE -1
+
+void ui() {
+  printf("-----------------------------------\n");
+  printf(">>> 1) Добавить Информацию о договоре\n");
+  printf(">>> 2) Три ключевых контрагента\n");
+  printf(">>> 0) Выход\n");
+  printf(">>> ");
+}
 
 int add_info(cmp_obj_array* cmp) {
   char _dc[STR_CONST_LEN];
@@ -87,7 +94,7 @@ int interract(int user_command, cmp_obj_array* cmp) {
   return 1;
 }
 
-int run() {
+int main() {
   cmp_obj_array cmp = create_array();
   if (cmp.buffer_size == 0) {
     printf("malloc return NULL\n");
@@ -110,5 +117,3 @@ int run() {
   clear_array(&cmp);
   return 0;
 }
-
-int main() { return run(); }

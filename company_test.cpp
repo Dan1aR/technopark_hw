@@ -13,7 +13,7 @@ TEST(COMPANY_TEST, Assert_1) {
   clear_array(&cmp);
 }
 
-TEST(COMPANY_TEST, Assert_2) {
+TEST(CREATION_TEST, ARRAY_SIZE_1) {
   cmp_obj_array cmp = create_array();
   char tp[3] = "t1";
   char nm[3] = "n1";
@@ -22,7 +22,7 @@ TEST(COMPANY_TEST, Assert_2) {
   clear_array(&cmp);
 }
 
-TEST(COMPANY_TEST, Assert_3) {
+TEST(CREATION_TEST, ARRAY_SIZE_5) {
   cmp_obj_array cmp = create_array();
   char tp[3] = "t1";
   char nm[3] = "n1";
@@ -36,7 +36,7 @@ TEST(COMPANY_TEST, Assert_3) {
   clear_array(&cmp);
 }
 
-TEST(COMPANY_TEST, Assert_4) {
+TEST(FIND_MAX_TEST, ASSERT_MAX_IDX) {
   cmp_obj_array cmp = create_array();
   char tp[3] = "t1";
   char nm[3] = "n1";
@@ -53,7 +53,7 @@ TEST(COMPANY_TEST, Assert_4) {
   clear_array(&cmp);
 }
 
-TEST(COMPANY_TEST, Assert_5) {
+TEST(CLEAR_TEST, ARRAY_NULL) {
   cmp_obj_array cmp = create_array();
   char tp[3] = "t1";
   char nm[3] = "n1";

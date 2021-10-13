@@ -67,10 +67,12 @@ int add_el(cmp_obj_array* cmp, char* _document_type, double _value,
            char* _counterparty_name, unsigned int _day, unsigned int _mounth,
            unsigned int _year, int _add_agreements,
            double _add_agreements_value) {
+  if (!cmp) {
+    return ERROR_CODE;
+  }
   if (cmp->size == cmp->buffer_size) {
     cmp->buffer_size *= 2;
-    Cmp_obj** tmp =
-        (Cmp_obj**)realloc(cmp->arr, cmp->buffer_size * sizeof(Cmp_obj*));
+    Cmp_obj** tmp = (Cmp_obj**)realloc(cmp->arr, cmp->buffer_size * sizeof(Cmp_obj*));
     if (tmp) {
       cmp->arr = tmp;
     } else {
@@ -78,9 +80,10 @@ int add_el(cmp_obj_array* cmp, char* _document_type, double _value,
     }
   }
 
-  cmp->arr[cmp->size] =
-      Company_new(_document_type, _value, _counterparty_name, _day, _mounth,
-                  _year, _add_agreements, _add_agreements_value);
+  cmp->arr[cmp->size] = Company_new(_document_type, _value, 
+                                    _counterparty_name, _day, _mounth,
+                                    _year, _add_agreements, 
+                                    _add_agreements_value);
   // malloc returns NULL check
   if (!cmp->arr[cmp->size]) {
     return ERROR_CODE;
@@ -92,24 +95,26 @@ int add_el(cmp_obj_array* cmp, char* _document_type, double _value,
 
 static void insert_value_in_max(int* max_idx, double* max_vls, double val,
                                 int idx) {
-  if (val > max_vls[2]) {
-    max_vls[0] = max_vls[1];
-    max_idx[0] = max_idx[1];
+  if (max_idx && max_vls) {
+    if (val > max_vls[2]) {
+      max_vls[0] = max_vls[1];
+      max_idx[0] = max_idx[1];
 
-    max_vls[1] = max_vls[2];
-    max_idx[1] = max_idx[2];
+      max_vls[1] = max_vls[2];
+      max_idx[1] = max_idx[2];
 
-    max_vls[2] = val;
-    max_idx[2] = idx;
-  } else if (val > max_vls[1]) {
-    max_vls[0] = max_vls[1];
-    max_idx[0] = max_idx[1];
+      max_vls[2] = val;
+      max_idx[2] = idx;
+    } else if (val > max_vls[1]) {
+      max_vls[0] = max_vls[1];
+      max_idx[0] = max_idx[1];
 
-    max_vls[1] = val;
-    max_idx[1] = idx;
-  } else if (val > max_vls[0]) {
-    max_vls[0] = val;
-    max_idx[0] = idx;
+      max_vls[1] = val;
+      max_idx[1] = idx;
+    } else if (val > max_vls[0]) {
+      max_vls[0] = val;
+      max_idx[0] = idx;
+    }
   }
 }
 
