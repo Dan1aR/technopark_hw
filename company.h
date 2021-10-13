@@ -12,7 +12,7 @@ typedef struct {
 } Cmp_obj;
 
 Cmp_obj* Company_new(char*, double, char*, unsigned int, unsigned int,
-                    unsigned int, int, double);
+                     unsigned int, int, double);
 
 typedef struct {
   Cmp_obj** arr;

@@ -6,7 +6,6 @@ extern "C" {
 
 #include <cstring>
 
-
 TEST(COMPANY_TEST, Assert_1) {
   cmp_obj_array cmp = create_array();
   EXPECT_EQ(cmp.size, 0);

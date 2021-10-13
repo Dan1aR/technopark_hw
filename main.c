@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -7,7 +8,6 @@
 
 #define STR_CONST_LEN 255
 #define ERROR_CODE -1
-#define STRFTIME_MAX_SIZE 100
 
 int add_info(cmp_obj_array* cmp) {
   char _dc[STR_CONST_LEN];
@@ -26,7 +26,7 @@ int add_info(cmp_obj_array* cmp) {
   printf(">>> Введите дату в формате день.месяц.год - 6.Dec.2001: ");
   scanf("%254s", _date);
   struct tm _tm;
-  while (!strftime(_date, STRFTIME_MAX_SIZE, "%d.%b.%Y", &_tm)) {
+  while (!strptime(_date, "%d.%b.%Y", &_tm)) {
     printf(">>> Некорректно введены данные \n");
     printf(">>> Ожидается формат день.месяц.год - 6.Dec.2001 \n >>> ");
     scanf("%254s", _date);
@@ -111,6 +111,4 @@ int run() {
   return 0;
 }
 
-int main() {
-  return run();
-}
+int main() { return run(); }

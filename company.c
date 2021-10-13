@@ -9,10 +9,10 @@
 #define MAX_IDX_SIZE 3
 
 Cmp_obj* Company_new(char* _document_type, double _value,
-                    char* _counterparty_name, unsigned int _day,
-                    unsigned int _mounth, unsigned int _year,
-                    int _add_agreements, double _add_agreements_value) {
-  Cmp_obj *p = (Cmp_obj*)malloc(sizeof(Cmp_obj));
+                     char* _counterparty_name, unsigned int _day,
+                     unsigned int _mounth, unsigned int _year,
+                     int _add_agreements, double _add_agreements_value) {
+  Cmp_obj* p = (Cmp_obj*)malloc(sizeof(Cmp_obj));
   if (!p) {
     printf("malloc return NULL\n");
     return NULL;
@@ -21,6 +21,7 @@ Cmp_obj* Company_new(char* _document_type, double _value,
   p->document_type = (char*)malloc(sizeof(_document_type));
   if (!p->document_type) {
     printf("malloc return NULL\n");
+    free(p);
     return NULL;
   }
   strcpy(p->document_type, _document_type);
@@ -30,6 +31,7 @@ Cmp_obj* Company_new(char* _document_type, double _value,
   p->counterparty_name = (char*)malloc(sizeof(_counterparty_name));
   if (!p->counterparty_name) {
     printf("malloc return NULL\n");
+    free(p);
     return NULL;
   }
   strcpy(p->counterparty_name, _counterparty_name);
