@@ -11,11 +11,11 @@ typedef struct {
   double add_agreements_value;
 } Cmp_obj;
 
-Cmp_obj Company_new(char*, double, char*, unsigned int, unsigned int,
+Cmp_obj* Company_new(char*, double, char*, unsigned int, unsigned int,
                     unsigned int, int, double);
 
 typedef struct {
-  Cmp_obj* arr;
+  Cmp_obj** arr;
   size_t buffer_size;
   size_t size;
 } cmp_obj_array;

@@ -59,9 +59,9 @@ int show_three_max_counterparty(cmp_obj_array* cmp) {
   printf("Имя - Сумма Договора - Сумма Дополнительных соглашений\n");
   for (int _idx = 2; _idx >= 0; _idx--) {
     if (max_idx[_idx] != -1) {
-      printf("%s - %2f - %2f \n", cmp->arr[max_idx[_idx]].counterparty_name,
-             cmp->arr[max_idx[_idx]].value,
-             cmp->arr[max_idx[_idx]].add_agreements_value);
+      printf("%s - %2f - %2f \n", cmp->arr[max_idx[_idx]]->counterparty_name,
+             cmp->arr[max_idx[_idx]]->value,
+             cmp->arr[max_idx[_idx]]->add_agreements_value);
     }
   }
   free(max_idx);
