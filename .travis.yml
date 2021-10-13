@@ -69,10 +69,9 @@ script:
     # Build main and tests
      - mkdir .build/
      - cd .build/
-     - cmake -DBUILD_TESTS=ON -DBUILD_MAIN=ON -DCMAKE_BUILD_TYPE=PROFILE .. 
+     - cmake -DBUILD_TESTS=ON -DBUILD_MAIN=ON .. 
      - make
      - valgrind --tool=memcheck --leak-check=full --error-exitcode=1 ctest
-     - gcovr -r .. -e ../.build/ --html --html-details -o coverage.html
      - cd ..
      - clang-format -i -style=Google *.cpp *.h *.c
      - cppcheck *.c *.cpp *.h 
