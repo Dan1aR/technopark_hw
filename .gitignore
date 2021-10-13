@@ -1,0 +1,8 @@
+.build/
+build/
+.vscode/
+.DS_Store
+ext/
+googletest/
+.gitmodules/
+teminal_commands.txt
