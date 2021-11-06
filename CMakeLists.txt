@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 11)
 
-project(hw2)
+project(hw2 C CXX)
 
 # This flags are used if cmake is called with -DCMAKE_BUILD_TYPE=PROFILE
 set(CMAKE_C_FLAGS_PROFILE --coverage)
@@ -10,17 +10,21 @@ set(CMAKE_CXX_FLAGS_PROFILE --coverage)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set cpp compile flags
-set(CPP_FLAGS "-Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow")
-set(C_FLAGS "-std=gnu11 -Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow")
-set(CMAKE_CXX_FLAGS ${CPP_FLAGS})
-set(CMAKE_C_FLAGS ${C_FLAGS})
+set(CMAKE_CXX_FLAGS "-Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow")
+set(CMAKE_C_FLAGS "-std=gnu11 -Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow")
 
-set(LIB_SOURCE_FILES tools.c)
-add_library(company STATIC ${LIB_SOURCE_FILES})
+#add_compile_options(-fsanitize=address -fsanitize=undefined)
+#add_link_options(-fsanitize=address -fsanitize=undefined)
+
+include_directories(include)
+
+set(FIND_CONSISTENT_LIB  ${PROJECT_SOURCE_DIR}/include/libdata_tools.h st_lib/libdataproc.c st_lib/tools.c)
+add_library(find_consistent_lib STATIC ${FIND_CONSISTENT_LIB})
+target_include_directories(find_consistent_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 # Build main
 option(BUILD_MAIN ON)
 if (BUILD_MAIN)
-    add_executable(main main.c)
-    target_link_libraries(main company)
+    add_executable(${PROJECT_NAME} src/main.c)
+    target_link_libraries(${PROJECT_NAME} PRIVATE find_consistent_lib)
 endif()

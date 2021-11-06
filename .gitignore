@@ -1,2 +1,7 @@
 /build
-/files
+/files/users/*
+!/files/users/.gitkeep
+/files/objs/*
+!/files/objs/.gitkeep
+.DS_Store
+*.o
