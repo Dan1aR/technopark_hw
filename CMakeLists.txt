@@ -18,7 +18,7 @@ add_link_options(-fsanitize=address -fsanitize=undefined)
 
 include_directories(include)
 
-set(FIND_CONSISTENT_LIB  ${PROJECT_SOURCE_DIR}/include/libdata_tools.h st_lib/libdataproc.c st_lib/tools.c)
+set(FIND_CONSISTENT_LIB  ${PROJECT_SOURCE_DIR}/include/libdata_tools.h lib_consistent/libdataproc.c lib_consistent/tools.c)
 add_library(find_consistent_lib STATIC ${FIND_CONSISTENT_LIB})
 target_include_directories(find_consistent_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

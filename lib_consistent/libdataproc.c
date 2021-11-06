@@ -39,6 +39,9 @@ static int __generate_objs__(int num_of_objs) {
             return ERROR_CODE;
         }
         obj *my_obj = (obj*)malloc(sizeof(obj));
+        if (unlikely(!my_obj)) {
+            return ERROR_CODE;
+        }
         my_obj->name = file_name;
         my_obj->id = i;
         my_obj->mean_rate = ((float)rand()/(float)(RAND_MAX)) * 4 + 1;
@@ -63,6 +66,9 @@ static int __generate_users__(int num_of_users, int delta) {
             return ERROR_CODE;
         }
         user *my_user = (user*)malloc(sizeof(user));
+        if (unlikely(!my_user)) {
+            return ERROR_CODE;
+        }
         my_user->id = i;
         list_int obj_list = {NULL, 0};
         for (int j = 0; j < i-delta; ++j) {

@@ -3,10 +3,14 @@
 #include "libdata_tools.h"
 
 int main() {
+    // EXAMPLE GENERATION - 1000 objs, 500 users
+    // Every user already know about [0 ... 450] objs
     __generate_data__(1000, 500, 50);
 
-
-    create_recomendations("../files/users/", "../files/objs/", "../files/objs_rank");
+    int create_rec_exit_code = create_recomendations("../files/users/", "../files/objs/", "../files/objs_rank");
+    if (unlikely(create_rec_exit_code != 0)) {
+        return 1;
+    }
 
     user my_user;
     FILE *file = fopen("../files/users/49", "rb");
