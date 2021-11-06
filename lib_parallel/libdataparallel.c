@@ -6,8 +6,6 @@
 
 #include "libdtools.h"
 
-
-
 static obj read_obj_from_file(const char *file_name) {
     obj my_obj;
     FILE * file = fopen(file_name, "rb");
@@ -91,7 +89,7 @@ static int list_objs_rec_for_user(user *my_user, vector_pairs_int_double *vector
     return 0;
 }
 
-int create_recomendations(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file) {
+int create_recomendations_parallel(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file) {
     vector_pairs_int_double vector = get_objs_vector(objs_files_path);
     int rank_file_exit_code = create_objs_rank_file(&vector, objs_rank_file);
     if (unlikely(rank_file_exit_code == ERROR_CODE)) {
@@ -121,5 +119,7 @@ int create_recomendations(const char *users_files_path, const char *objs_files_p
     }
 
     closedir(dir);
+
     return 0;
 }
+

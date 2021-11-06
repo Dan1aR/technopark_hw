@@ -1,5 +1,7 @@
 #pragma once
 
+#define _BUFFER_SIZE 254
+#define ERROR_CODE -1
 #define unlikely(x) __builtin_expect((x),0)
 
 typedef struct sub_my_list_int {
