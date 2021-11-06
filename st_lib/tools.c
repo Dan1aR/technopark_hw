@@ -33,6 +33,7 @@ int push_back(list_int *list, int val) {
         if (!list->head) {
             return ERROR_CODE;
         }
+        list->head->next = NULL;
         list->head->val = val;
         list->size = 1;
     }
@@ -45,6 +46,7 @@ int push_back(list_int *list, int val) {
         if (!node->next) {
             return ERROR_CODE;
         }
+        node->next->next = NULL;
         node->next->val = val;
         list->size++;
     }
@@ -70,6 +72,10 @@ int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
 }
 
 int in(const list_int *list, int val) {
+    if (!list) {
+        return 0;
+    }
+
     my_list_int *node = list->head;
     while (node) {
         if (node->val == val) {
@@ -81,9 +87,11 @@ int in(const list_int *list, int val) {
 }
 
 void swap_pair(pair_int_double *first, pair_int_double *second) {
-    pair_int_double tmp = *first;
-    *first = *second;
-    *second = tmp;
+    if (first && second) {
+        pair_int_double tmp = *first;
+        *first = *second;
+        *second = tmp;
+    }
 }
 
 int partition (vector_pairs_int_double *vector, int low, int high) {
@@ -101,10 +109,12 @@ int partition (vector_pairs_int_double *vector, int low, int high) {
 }
 
 void qsort_pairs(vector_pairs_int_double *vector, int low, int high) {
-    if (low < high) {
-        int pi = partition(vector, low, high);
-        qsort_pairs(vector, low, pi - 1);
-        qsort_pairs(vector, pi + 1, high);
+    if (vector) {
+        if (low < high) {
+            int pi = partition(vector, low, high);
+            qsort_pairs(vector, low, pi - 1);
+            qsort_pairs(vector, pi + 1, high);
+        }
     }
 }
 
