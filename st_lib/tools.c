@@ -6,13 +6,13 @@
 #define ERROR_CODE -1
 
 int get(const list_int *list, unsigned int i) {
-    if (!list) {
+    if (unlikely(!list)) {
         return ERROR_CODE;
     }
-    if (!list->head) {
+    if (unlikely(!list->head)) {
         return ERROR_CODE;
     }
-    if ((i < 0) || (i >= list->size)) {
+    if (unlikely((i < 0) || (i >= list->size))) {
         return ERROR_CODE;
     }
 
@@ -24,13 +24,13 @@ int get(const list_int *list, unsigned int i) {
 }
 
 int push_back(list_int *list, int val) {
-    if (!list) {
+    if (unlikely(!list)) {
         return ERROR_CODE;
     }
     
     if (!list->head) {
         list->head = (my_list_int*)malloc(sizeof(my_list_int));
-        if (!list->head) {
+        if (unlikely(!list->head)) {
             return ERROR_CODE;
         }
         list->head->next = NULL;
@@ -43,7 +43,7 @@ int push_back(list_int *list, int val) {
             node = node->next;
         }
         node->next = (my_list_int*)malloc(sizeof(my_list_int));
-        if (!node->next) {
+        if (unlikely(!node->next)) {
             return ERROR_CODE;
         }
         node->next->next = NULL;
@@ -54,7 +54,7 @@ int push_back(list_int *list, int val) {
 }
 
 int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
-    if (!vector) {
+    if (unlikely(!vector)) {
         return ERROR_CODE;
     }
     if (vector->size == vector->buffer_size) {
@@ -72,7 +72,7 @@ int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
 }
 
 int in(const list_int *list, int val) {
-    if (!list) {
+    if (unlikely(!list)) {
         return 0;
     }
 

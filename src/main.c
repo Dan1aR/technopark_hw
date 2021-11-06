@@ -3,7 +3,8 @@
 #include "libdata_tools.h"
 
 int main() {
-    __generate_data__(1000, 500, 10);
+    __generate_data__(1000, 500, 50);
+
 
     create_recomendations("../files/users/", "../files/objs/", "../files/objs_rank");
 

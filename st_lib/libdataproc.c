@@ -3,9 +3,9 @@
 #include <memory.h>
 #include <time.h>
 #include <dirent.h>
+#include <sys/wait.h>
 
-#include "tools.h"
-#include "libdataproc.h"
+#include "libdata_tools.h"
 
 // CONSTS
 #define ERROR_CODE -1
@@ -35,7 +35,7 @@ static int __generate_objs__(int num_of_objs) {
         strcat(file_name, i_buffer);
 
         FILE * file = fopen( file_name , "wb");
-        if (!file) {
+        if (unlikely(!file)) {
             return ERROR_CODE;
         }
         obj *my_obj = (obj*)malloc(sizeof(obj));
@@ -59,7 +59,7 @@ static int __generate_users__(int num_of_users, int delta) {
         strcat(file_name, i_buffer);
 
         FILE * file = fopen( file_name , "wb");
-        if (!file) {
+        if (unlikely(!file)) {
             return ERROR_CODE;
         }
         user *my_user = (user*)malloc(sizeof(user));
@@ -107,7 +107,7 @@ static user read_user_from_file(const char *file_name) {
 
 static int write_user_to_file(const user *my_user, const char *file_name) {
     FILE * file = fopen(file_name, "wb");
-    if (!file) {
+    if (unlikely(!file)) {
         return ERROR_CODE;
     }
     fwrite(my_user, sizeof(user), 1, file);
@@ -143,7 +143,7 @@ static int create_objs_rank_file(vector_pairs_int_double *vector, const char * f
     qsort_pairs(vector, 0, vector->size-1);
 
     FILE *file = fopen(file_name, "w");
-    if (!file) {
+    if (unlikely(!file)) {
         return ERROR_CODE;
     }
     for (int i = 0; i < vector->size; ++i) {
@@ -156,7 +156,7 @@ static int create_objs_rank_file(vector_pairs_int_double *vector, const char * f
 }
 
 static int list_objs_rec_for_user(user *my_user, vector_pairs_int_double *vector) {
-    if (!my_user || !vector) {
+    if (unlikely(!my_user || !vector)) {
         return ERROR_CODE;
     }
 
@@ -176,7 +176,7 @@ static int list_objs_rec_for_user(user *my_user, vector_pairs_int_double *vector
 int create_recomendations(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file) {
     vector_pairs_int_double vector = get_objs_vector(objs_files_path);
     int rank_file_exit_code = create_objs_rank_file(&vector, objs_rank_file);
-    if (rank_file_exit_code == ERROR_CODE) {
+    if (unlikely(rank_file_exit_code == ERROR_CODE)) {
         return ERROR_CODE;
     }
 
@@ -194,7 +194,7 @@ int create_recomendations(const char *users_files_path, const char *objs_files_p
             //printf("%s\n", path);
             
             int rec_objs_exit_code = list_objs_rec_for_user(&my_user, &vector);
-            if (rec_objs_exit_code == ERROR_CODE) {
+            if (unlikely(rec_objs_exit_code == ERROR_CODE)) {
                 return ERROR_CODE;
             }
             write_user_to_file(&my_user, path);

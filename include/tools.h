@@ -1,5 +1,7 @@
 #pragma once
 
+#define unlikely(x) __builtin_expect((x),0)
+
 typedef struct sub_my_list_int {
     int val;
     struct sub_my_list_int *next;
