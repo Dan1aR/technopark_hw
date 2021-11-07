@@ -20,7 +20,6 @@ static obj read_obj_from_file(const char *file_name) {
 static user read_user_from_file(const char *file_name) {
     user my_user;
     FILE *file = fopen(file_name, "rb");
-    printf("%s was here\n", file_name);
     fread(&my_user, sizeof(user), 1, file);
     fclose(file);
     return my_user;
@@ -83,15 +82,10 @@ typedef struct {
 void *list_objs_rec_for_user(void *args) {
     if (unlikely(!args)) {
         pthread_exit((void*)ERROR_CODE);
-    } 
-    int errflag = pthread_detach(pthread_self());
-    if (unlikely(errflag != 0)) {
-        pthread_exit((void*)ERROR_CODE);
     }
     
     args_struct *arg = (args_struct*)args;
-    printf("file path in thread: %s\n", arg->my_user_path);
-    printf("vector size in thread = %d\n", arg->vector->size );
+
     user my_user = read_user_from_file( arg->my_user_path );
 
     list_int rec_objs_list = {NULL, 0};
@@ -105,11 +99,12 @@ void *list_objs_rec_for_user(void *args) {
 
     my_user.rec_objs_list = rec_objs_list;
     write_user_to_file(&my_user, arg->my_user_path);
+    free(arg);
 
     pthread_exit(NULL);
 }
 
-int create_recomendations_parallel(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file) {
+int create_recomendations_parallel(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file, const int _max_thread_num) {
     vector_pairs_int_double vector = get_objs_vector(objs_files_path);
     int rank_file_exit_code = create_objs_rank_file(&vector, objs_rank_file);
     if (unlikely(rank_file_exit_code == ERROR_CODE)) {
@@ -119,6 +114,9 @@ int create_recomendations_parallel(const char *users_files_path, const char *obj
     DIR* dir = opendir(users_files_path);
     struct dirent* entity;
     entity = readdir(dir);
+
+    pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * _max_thread_num);    
+    int thread_i = 0;
     while (entity != NULL) {
         // .DS_Store protection edded :)
         if ( (entity->d_type != DT_DIR) && (strchr(entity->d_name, '.') == 0) ) {
@@ -126,20 +124,32 @@ int create_recomendations_parallel(const char *users_files_path, const char *obj
             strcat(path, users_files_path);
             strcat(path, entity->d_name);
 
-            pthread_t thread;
-
             args_struct *args = (args_struct*)malloc(sizeof(args_struct));
             strcpy(args->my_user_path, path);
             args->vector = &vector;
 
-            printf("%s; vector size out of thread = %d\n", args->my_user_path, args->vector->size);
-            int rec_objs_exit_code = pthread_create(&thread, NULL, list_objs_rec_for_user, args);
+            // printf("%s; vector size out of thread = %d\n", args->my_user_path, args->vector->size);
+            int rec_objs_exit_code = pthread_create(&threads[thread_i], NULL, list_objs_rec_for_user, args);
             if (unlikely(rec_objs_exit_code == ERROR_CODE)) {
                 return ERROR_CODE;
-            }          
+            }    
+            thread_i++;      
+        }
+
+        if (thread_i == _max_thread_num) {
+            for (int i = 0; i < thread_i; ++i) {
+                pthread_join(threads[i], NULL);
+            }
+            thread_i = 0;
         }
         entity = readdir(dir);
     }
+
+    for (int i = 0; i < thread_i; ++i) {
+        pthread_join(threads[i], NULL);
+    }
+    thread_i = 0;
+
 
     closedir(dir);
 
