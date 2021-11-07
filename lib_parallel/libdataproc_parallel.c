@@ -3,8 +3,11 @@
 #include <memory.h>
 #include <time.h>
 #include <dirent.h>
+#include <pthread.h>
 
 #include "libdtools.h"
+
+#define _NUM_REC_FOR_USER 10
 
 static obj read_obj_from_file(const char *file_name) {
     obj my_obj;
@@ -16,7 +19,8 @@ static obj read_obj_from_file(const char *file_name) {
 
 static user read_user_from_file(const char *file_name) {
     user my_user;
-    FILE * file = fopen(file_name, "rb");
+    FILE *file = fopen(file_name, "rb");
+    printf("%s was here\n", file_name);
     fread(&my_user, sizeof(user), 1, file);
     fclose(file);
     return my_user;
@@ -71,22 +75,38 @@ static int create_objs_rank_file(vector_pairs_int_double *vector, const char * f
     return ERROR_CODE;
 }
 
-static int list_objs_rec_for_user(user *my_user, vector_pairs_int_double *vector) {
-    if (unlikely(!my_user || !vector)) {
-        return ERROR_CODE;
+typedef struct {
+    char my_user_path[_BUFFER_SIZE];
+    vector_pairs_int_double *vector;
+} args_struct;
+
+void *list_objs_rec_for_user(void *args) {
+    if (unlikely(!args)) {
+        pthread_exit((void*)ERROR_CODE);
+    } 
+    int errflag = pthread_detach(pthread_self());
+    if (unlikely(errflag != 0)) {
+        pthread_exit((void*)ERROR_CODE);
     }
+    
+    args_struct *arg = (args_struct*)args;
+    printf("file path in thread: %s\n", arg->my_user_path);
+    printf("vector size in thread = %d\n", arg->vector==NULL );
+    user my_user = read_user_from_file( arg->my_user_path );
 
     list_int rec_objs_list = {NULL, 0};
     int i = 0;
-    while (rec_objs_list.size < 10 && i < vector->size) {
-        if (!in(&my_user->objs_list, vector->arr[i].first)) {
-            push_back(&rec_objs_list, vector->arr[i].first);
-            //printf("%d HERE :: %d; Rec-size = %d\n", i, vector->arr[i].first, rec_obj_list.size);
+    while ( (rec_objs_list.size < _NUM_REC_FOR_USER) && (i < arg->vector->size) ) {
+        if (!in(&my_user.objs_list, arg->vector->arr[i].first)) {
+            push_back(&rec_objs_list, arg->vector->arr[i].first);
         }
         i++;
     }
-    my_user->rec_objs_list = rec_objs_list;
-    return 0;
+
+    my_user.rec_objs_list = rec_objs_list;
+    write_user_to_file(&my_user, arg->my_user_path);
+
+    pthread_exit(NULL);
 }
 
 int create_recomendations_parallel(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file) {
@@ -105,15 +125,18 @@ int create_recomendations_parallel(const char *users_files_path, const char *obj
             char path[_BUFFER_SIZE] = { 0 };
             strcat(path, users_files_path);
             strcat(path, entity->d_name);
-            user my_user = read_user_from_file(path);
 
-            //printf("%s\n", path);
-            
-            int rec_objs_exit_code = list_objs_rec_for_user(&my_user, &vector);
+            pthread_t thread;
+
+            args_struct *args = (args_struct*)malloc(sizeof(args_struct));
+            strcpy(args->my_user_path, path);
+            args->vector = &vector;
+
+            printf("%s; vector size out of thread = %d\n", args->my_user_path, args->vector->size);
+            int rec_objs_exit_code = pthread_create(&thread, NULL, list_objs_rec_for_user, &args);
             if (unlikely(rec_objs_exit_code == ERROR_CODE)) {
                 return ERROR_CODE;
-            }
-            write_user_to_file(&my_user, path);
+            }          
         }
         entity = readdir(dir);
     }
