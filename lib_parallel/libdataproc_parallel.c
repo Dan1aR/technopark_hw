@@ -91,7 +91,7 @@ void *list_objs_rec_for_user(void *args) {
     
     args_struct *arg = (args_struct*)args;
     printf("file path in thread: %s\n", arg->my_user_path);
-    printf("vector size in thread = %d\n", arg->vector==NULL );
+    printf("vector size in thread = %d\n", arg->vector->size );
     user my_user = read_user_from_file( arg->my_user_path );
 
     list_int rec_objs_list = {NULL, 0};
@@ -133,7 +133,7 @@ int create_recomendations_parallel(const char *users_files_path, const char *obj
             args->vector = &vector;
 
             printf("%s; vector size out of thread = %d\n", args->my_user_path, args->vector->size);
-            int rec_objs_exit_code = pthread_create(&thread, NULL, list_objs_rec_for_user, &args);
+            int rec_objs_exit_code = pthread_create(&thread, NULL, list_objs_rec_for_user, args);
             if (unlikely(rec_objs_exit_code == ERROR_CODE)) {
                 return ERROR_CODE;
             }          
