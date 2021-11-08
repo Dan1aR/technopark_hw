@@ -43,7 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE find_parallel_lib -ldl)
 
 # Build test
 enable_testing()
-include(googletest)
+include(GoogleTest)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 
