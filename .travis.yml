@@ -67,11 +67,6 @@ install:
 script:
     # Build main and tests
      - mkdir build/
-     - mkdir files/
-     - cd files
-     - mkdir users/
-     - mkdir objs/
-     - cd ..
      - cd build/
      - cmake .. 
      - make
