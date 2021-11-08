@@ -71,6 +71,7 @@ script:
      - cmake .. 
      - make
      - ctest
+     - cd ..
      - cppcheck ./*/*.c ./*/*.cpp ./*/*.h
      
 
