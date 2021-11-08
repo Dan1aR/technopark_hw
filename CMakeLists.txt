@@ -40,7 +40,6 @@ add_executable(${PROJECT_NAME} src/main.c)
 target_link_libraries(${PROJECT_NAME} PRIVATE find_consistent_lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE find_parallel_lib -ldl)
 
-
 # Build test
 enable_testing()
 include(GoogleTest)
