@@ -18,11 +18,11 @@ set(CMAKE_C_FLAGS "-std=gnu11 -Wall -Wpedantic -Werror -Wno-variadic-macros -Wno
 
 include_directories(include)
 
-set(FIND_CONSISTENT_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_consistent/libdataproc_consistent.c lib_consistent/tools.c generator/generator.c)
+set(FIND_CONSISTENT_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_consistent/libdataproc_consistent.c lib_consistent/tools.c generator/generator.c src/timer.c)
 add_library(find_consistent_lib STATIC ${FIND_CONSISTENT_LIB})
 target_include_directories(find_consistent_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-set(FIND_PARALLEL_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_parallel/libdataproc_parallel.c lib_parallel/tools.c generator/generator.c)
+set(FIND_PARALLEL_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_parallel/libdataproc_parallel.c lib_parallel/tools.c generator/generator.c src/timer.c)
 add_library(find_parallel_lib SHARED ${FIND_PARALLEL_LIB})
 target_include_directories(find_parallel_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

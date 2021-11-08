@@ -17,6 +17,8 @@ typedef struct {
 int get(const list_int *list, unsigned int i);
 int push_back(list_int *list, int val);
 int in(const list_int *list, int val);
+void free_list(list_int *list);
+void print_list(const list_int *list);
 
 typedef struct {
     int first;
@@ -31,5 +33,6 @@ typedef struct {
 
 int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair);
 void swap_pair(pair_int_double *first, pair_int_double *second);
+
 int partition (vector_pairs_int_double *vector, int low, int high);
 void qsort_pairs(vector_pairs_int_double *vector, int low, int high);

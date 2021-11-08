@@ -4,4 +4,5 @@
 #include "obj_user_struct.h"
 #include "libdataproc_consistent.h"
 #include "libdataproc_parallel.h"
+#include "timer.h"
 #include "generator.h"

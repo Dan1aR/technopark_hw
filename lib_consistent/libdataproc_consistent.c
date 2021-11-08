@@ -6,8 +6,6 @@
 
 #include "libdtools.h"
 
-
-
 static obj read_obj_from_file(const char *file_name) {
     obj my_obj;
     FILE * file = fopen(file_name, "rb");
@@ -63,7 +61,6 @@ static int create_objs_rank_file(vector_pairs_int_double *vector, const char * f
     FILE *file = fopen(file_name, "w");
     if (file) {
         for (int i = 0; i < vector->size; ++i) {
-            // printf("%d %f\n", vector.arr[i].first, vector.arr[i].second);
             fprintf(file, "%d %f\n", vector->arr[i].first, vector->arr[i].second);
         }
 
@@ -77,7 +74,7 @@ static int list_objs_rec_for_user(user *my_user, vector_pairs_int_double *vector
     if (unlikely(!my_user || !vector)) {
         return ERROR_CODE;
     }
-
+    
     list_int rec_objs_list = {NULL, 0};
     int i = 0;
     while (rec_objs_list.size < 10 && i < vector->size) {
@@ -91,13 +88,17 @@ static int list_objs_rec_for_user(user *my_user, vector_pairs_int_double *vector
     return 0;
 }
 
-int create_recomendations(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file) {
+int create_recomendations(const char *users_files_path, const char *objs_files_path, const char *objs_rank_file, const int _max_thread_num) {
+    if (unlikely(_max_thread_num != 0)) {
+        return ERROR_CODE;
+    }
+
     vector_pairs_int_double vector = get_objs_vector(objs_files_path);
     int rank_file_exit_code = create_objs_rank_file(&vector, objs_rank_file);
     if (unlikely(rank_file_exit_code == ERROR_CODE)) {
         return ERROR_CODE;
     }
-
+    
     DIR* dir = opendir(users_files_path);
     struct dirent* entity;
     entity = readdir(dir);
@@ -108,8 +109,6 @@ int create_recomendations(const char *users_files_path, const char *objs_files_p
             strcat(path, users_files_path);
             strcat(path, entity->d_name);
             user my_user = read_user_from_file(path);
-
-            //printf("%s\n", path);
             
             int rec_objs_exit_code = list_objs_rec_for_user(&my_user, &vector);
             if (unlikely(rec_objs_exit_code == ERROR_CODE)) {

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "tools.h"
+
 typedef struct {
     int id;
     list_int objs_list;
@@ -7,7 +9,7 @@ typedef struct {
 } user;
 
 typedef struct {
-    char name[_BUFFER_SIZE];
+    char *name;
     int id;
     double mean_rate;
     unsigned int num_rates;

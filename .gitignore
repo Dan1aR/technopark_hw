@@ -3,5 +3,6 @@
 !/files/users/.gitkeep
 /files/objs/*
 !/files/objs/.gitkeep
+/.vscode
 .DS_Store
 *.o

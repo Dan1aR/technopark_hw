@@ -3,6 +3,8 @@
 
 #include "tools.h"
 
+// list
+
 int get(const list_int *list, unsigned int i) {
     if (unlikely(!list)) {
         return ERROR_CODE;
@@ -51,6 +53,41 @@ int push_back(list_int *list, int val) {
     return 0;
 }
 
+void print_list(const list_int *list) {
+    my_list_int *node = list->head;
+    while (node) {
+        printf("%d ", node->val);
+    }
+    printf("\n");
+}
+
+int in(const list_int *list, int val) {
+    if (unlikely(!list)) {
+        return 0;
+    }
+
+    my_list_int *node = list->head;
+    while (node) {
+        if (node->val == val) {
+            return 1;
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+void free_list(list_int *list) {
+    my_list_int* tmp;
+    while (list->head != NULL)
+    {
+       tmp = list->head;
+       list->head = list->head->next;
+       free(tmp);
+    }
+}
+
+// vector
+
 int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
     if (unlikely(!vector)) {
         return ERROR_CODE;
@@ -69,20 +106,7 @@ int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
     return 0;
 }
 
-int in(const list_int *list, int val) {
-    if (unlikely(!list)) {
-        return 0;
-    }
-
-    my_list_int *node = list->head;
-    while (node) {
-        if (node->val == val) {
-            return 1;
-        }
-        node = node->next;
-    }
-    return 0;
-}
+// sort pairs
 
 void swap_pair(pair_int_double *first, pair_int_double *second) {
     if (first && second) {
@@ -115,4 +139,3 @@ void qsort_pairs(vector_pairs_int_double *vector, int low, int high) {
         }
     }
 }
-
