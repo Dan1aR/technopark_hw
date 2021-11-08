@@ -71,6 +71,7 @@ script:
      - cmake .. 
      - make
      - ctest
+     - cppcheck ./*/*.c ./*/*.cpp ./*/*.h
      
 
 after_success:

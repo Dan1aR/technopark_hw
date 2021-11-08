@@ -1,15 +1,13 @@
-cmake_minimum_required(VERSION 3.14.7)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_CXX_STANDARD 11)
 
 include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
-)
-
-# Prevent GoogleTest from overriding our compiler/linker options
+FetchContent_Declare( 
+    googletest 
+    URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
+) 
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE) 
 FetchContent_MakeAvailable(googletest)
 
 project(hw2 C CXX)
@@ -45,10 +43,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE find_parallel_lib -ldl)
 
 # Build test
 enable_testing()
-find_package(GTest REQUIRED)
+include(googletest)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 
 add_executable(libgtest tests/gtests.cpp src/timer.c)
-target_link_libraries(libgtest ${GTEST_LIBRARIES} find_consistent_lib find_parallel_lib -ldl)
+target_link_libraries(libgtest ${GTEST_LIBRARIES} find_consistent_lib find_parallel_lib -ldl gtest_main)
 gtest_add_tests(TARGET libgtest)
