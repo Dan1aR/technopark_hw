@@ -18,8 +18,8 @@ set(CMAKE_CXX_FLAGS_PROFILE --coverage)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set cpp compile flags
-set(CMAKE_CXX_FLAGS "-Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow")
-set(CMAKE_C_FLAGS "-std=gnu11 -Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow -pthread")
+set(CMAKE_CXX_FLAGS "-g -O0 -Wall -Werror  -fprofile-arcs -ftest-coverage -fPIC")
+set(CMAKE_C_FLAGS "-g -O0 -Wall -Werror -fprofile-arcs -ftest-coverage -fPIC -pthread")
 
 # add_compile_options(-fsanitize=address -fsanitize=undefined)
 # add_link_options(-fsanitize=address -fsanitize=undefined)
