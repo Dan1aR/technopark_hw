@@ -79,7 +79,7 @@ typedef struct {
     vector_pairs_int_double *vector;
 } args_struct;
 
-void *list_objs_rec_for_user(void *args) {
+static void *list_objs_rec_for_user(void *args) {
     if (unlikely(!args)) {
         pthread_exit((void*)ERROR_CODE);
     }
@@ -149,7 +149,6 @@ int create_recomendations_parallel(const char *users_files_path, const char *obj
         pthread_join(threads[i], NULL);
     }
     thread_i = 0;
-
 
     closedir(dir);
 

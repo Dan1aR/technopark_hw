@@ -1,0 +1,87 @@
+dist:     trusty    # используем Ubuntu 14.04 Trusty Tahr (а не 12.02 Precise Pangolin)
+sudo:     required  # используем Virtual Machine (а не Docker container)
+language: cpp
+
+addons:
+  apt:
+    packages:
+      - valgrind
+      - lcov
+
+env:
+  global:
+    # Ubuntu version
+    - LINUX_DIST=bionic
+    - DEPS_DIR=${TRAVIS_BUILD_DIR}/deps
+    # Global build options and C++ flags
+    - C_FLAGS="-Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
+    - CXX_FLAGS="-Wall -Wpedantic -Werror -Wno-variadic-macros -Wno-long-long -Wno-shadow"
+    # Misc
+    - RUN_TESTS=true
+    - COVERAGE=false
+
+matrix:
+  include:
+    - os: linux
+      dist: bionic
+      sudo: true
+      compiler:
+        - gcc
+      addons:
+       apt:
+         packages: 
+           - gcc-7
+           - g++-7
+           - valgrind
+           # Misc
+           - python-yaml
+           - lcov
+           - libopencv-dev
+         sources: 
+           - ubuntu-toolchain-r-test
+    
+before_install:
+    # Combine global build options with OS/compiler-dependent options
+    - export CMAKE_OPTIONS=${CMAKE_OPTIONS}" "${ENV_CMAKE_OPTIONS}
+    - export CXX_FLAGS=${CXX_FLAGS}" "${ENV_CXX_FLAGS}
+
+install:
+    - if [ "$CXX" = "clang++" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then export CXX="clang++-6.0" CC="clang-6.0"; fi
+    - echo ${PATH}
+    - echo ${CXX}
+    - ${CXX} --version
+    - ${CXX} -v
+    - sudo apt-get install valgrind
+    - sudo apt-get install gcovr
+    - sudo apt-get install clang-format
+    - sudo apt-get install cppcheck
+    
+    # Download and install recent cmake
+    - |
+      if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then
+        CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v3.20.2/cmake-3.20.2-linux-x86_64.tar.gz"
+        mkdir -p ${DEPS_DIR}/cmake
+        travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C ${DEPS_DIR}/cmake
+        export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+      fi
+script:
+    # Build main and tests
+     - mkdir build/
+     - mkdir files/
+     - cd files
+     - mkdir users/
+     - mkdir objs/
+     - cd ..
+     - cd build/
+     - cmake .. 
+     - make
+     - ctest
+     
+
+after_success:
+# Create lcov report
+- lcov --capture --directory . --output-file coverage.info
+- lcov --remove coverage.info '/.build/*' --output-file coverage.info # filter system-files
+- lcov --list coverage.info # debug info
+# Uploading report to CodeCov
+- bash <(curl -s https://codecov.io/bash) -f coverage.info || echo "Codecov did not collect coverage reports"

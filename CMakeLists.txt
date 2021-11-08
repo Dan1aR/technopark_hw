@@ -1,6 +1,16 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.14.7)
 
 set(CMAKE_CXX_STANDARD 11)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        703bd9caab50b139428cea1aaff9974ebee5742e # release-1.10.0
+)
+
+# Prevent GoogleTest from overriding our compiler/linker options
+FetchContent_MakeAvailable(googletest)
 
 project(hw2 C CXX)
 
@@ -28,9 +38,17 @@ target_include_directories(find_parallel_lib PUBLIC ${PROJECT_SOURCE_DIR}/includ
 
 
 # Build main
-option(BUILD_MAIN ON)
-if (BUILD_MAIN)
-    add_executable(${PROJECT_NAME} src/main.c)
-    target_link_libraries(${PROJECT_NAME} PRIVATE find_consistent_lib)
-    target_link_libraries(${PROJECT_NAME} PRIVATE find_parallel_lib -ldl)
-endif()
+add_executable(${PROJECT_NAME} src/main.c)
+target_link_libraries(${PROJECT_NAME} PRIVATE find_consistent_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE find_parallel_lib -ldl)
+
+
+# Build test
+enable_testing()
+find_package(GTest REQUIRED)
+
+include_directories(${GTEST_INCLUDE_DIRS})
+
+add_executable(libgtest tests/gtests.cpp src/timer.c)
+target_link_libraries(libgtest ${GTEST_LIBRARIES} find_consistent_lib find_parallel_lib -ldl)
+gtest_add_tests(TARGET libgtest)

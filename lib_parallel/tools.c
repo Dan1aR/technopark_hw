@@ -4,7 +4,6 @@
 #include "tools.h"
 
 // list
-
 int get(const list_int *list, unsigned int i) {
     if (unlikely(!list)) {
         return ERROR_CODE;
@@ -87,7 +86,6 @@ void free_list(list_int *list) {
 }
 
 // vector
-
 int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
     if (unlikely(!vector)) {
         return ERROR_CODE;
@@ -107,7 +105,6 @@ int push_back_vp(vector_pairs_int_double *vector, pair_int_double pair) {
 }
 
 // sort pairs
-
 void swap_pair(pair_int_double *first, pair_int_double *second) {
     if (first && second) {
         pair_int_double tmp = *first;
