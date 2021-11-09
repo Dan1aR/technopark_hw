@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all ./hw2
-// "../files/users/" "../files/objs/" "../files/objs_rank" 100
+// valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all
+// ./hw2 "../files/users/" "../files/objs/" "../files/objs_rank" 100
 #include "libdtools.h"
 
 int main(int argc, char *argv[]) {
@@ -18,9 +18,10 @@ int main(int argc, char *argv[]) {
   const char *objs_rank_path = argv[3];
   const int max_thread_num = atoi(argv[4]);
 
-  // EXAMPLE GENERATION - 1000 objs, 30000 users
-  // SOME clean up before
+  
+  // Some clean up before start - just to be sure
   __clean_up__(users_path, objs_path);
+  // EXAMPLE GENERATION - 1000 objs, 50000 users
   int gen_data_exit_code =
       __generate_data__(1000, 1000, 500, users_path, objs_path);
   if (unlikely(gen_data_exit_code != 0)) {
