@@ -64,7 +64,7 @@ typedef struct {
 
 static void *list_objs_rec_for_user(void *args) {
   if (unlikely(!args)) {
-    pthread_exit((void *)ERROR_CODE);
+    return (void*)ERROR_CODE;
   }
 
   args_struct *arg = (args_struct *)args;
@@ -85,7 +85,7 @@ static void *list_objs_rec_for_user(void *args) {
   free_list(&my_user.rec_objs_list);
   free(arg);
 
-  pthread_exit(NULL);
+  return NULL;
 }
 
 int create_recomendations_parallel(const char *users_files_path,
