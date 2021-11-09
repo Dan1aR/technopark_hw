@@ -61,6 +61,7 @@ static int __generate_users__(const int num_of_objs, const int num_of_users,
     user *my_user = (user *)malloc(sizeof(user));
     memset(my_user, 0, sizeof(user));
     if (unlikely(!my_user)) {
+      free(file_name);
       return ERROR_CODE;
     }
 

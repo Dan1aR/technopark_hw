@@ -21,8 +21,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-g -O0 -Wall -Werror  -fprofile-arcs -ftest-coverage -fPIC")
 set(CMAKE_C_FLAGS "-g -O0 -Wall -Werror -fprofile-arcs -ftest-coverage -fPIC -pthread")
 
-add_compile_options(-fsanitize=address -fsanitize=undefined -lasan)
-add_link_options(-fsanitize=address -fsanitize=undefined -lasan)
+add_compile_options(-fsanitize=address -fsanitize=undefined)
+add_link_options(-fsanitize=address -fsanitize=undefined)
 
 include_directories(include)
 
