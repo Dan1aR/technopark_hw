@@ -4,24 +4,6 @@
 #include "tools.h"
 
 // list
-int get(const list_int *list, unsigned int i) {
-    if (unlikely(!list)) {
-        return ERROR_CODE;
-    }
-    if (unlikely(!list->head)) {
-        return ERROR_CODE;
-    }
-    if (unlikely((i < 0) || (i >= list->size))) {
-        return ERROR_CODE;
-    }
-
-    my_list_int *node = list->head;
-    for (int _i = 0; _i < i; ++_i) {
-        node = node->next;
-    }
-    return node->val;
-}
-
 int push_back(list_int *list, int val) {
     if (unlikely(!list)) {
         return ERROR_CODE;
@@ -52,13 +34,6 @@ int push_back(list_int *list, int val) {
     return 0;
 }
 
-void print_list(const list_int *list) {
-    my_list_int *node = list->head;
-    while (node) {
-        printf("%d ", node->val);
-    }
-    printf("\n");
-}
 
 int in(const list_int *list, int val) {
     if (unlikely(!list)) {
