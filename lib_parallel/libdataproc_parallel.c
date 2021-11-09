@@ -1,0 +1,146 @@
+#include <dirent.h>
+#include <memory.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include "libdtools.h"
+
+#define _NUM_REC_FOR_USER 10
+
+static obj read_obj_from_file(const char *file_name) {
+  obj my_obj;
+  FILE *file = fopen(file_name, "rb");
+  fread(&my_obj, sizeof(obj), 1, file);
+  fclose(file);
+  return my_obj;
+}
+
+static vector_pairs_int_double get_objs_vector(const char *objs_files_path) {
+  vector_pairs_int_double vector = {NULL, 0, 0};
+
+  DIR *dir = opendir(objs_files_path);
+  struct dirent *entity;
+  entity = readdir(dir);
+  while (entity != NULL) {
+    // .DS_Store protection edded :)
+    if ((entity->d_type != DT_DIR) && (strchr(entity->d_name, '.') == 0)) {
+      char path[_BUFFER_SIZE] = {0};
+      strncat(path, objs_files_path, strlen(objs_files_path));
+      strncat(path, entity->d_name, strlen(entity->d_name));
+      obj my_obj = read_obj_from_file(path);
+      pair_int_double pair = {my_obj.id, my_obj.mean_rate};
+      push_back_vp(&vector, pair);
+    }
+    entity = readdir(dir);
+  }
+
+  closedir(dir);
+  return vector;
+}
+
+static int create_objs_rank_file(vector_pairs_int_double *vector,
+                                 const char *file_name) {
+  qsort_pairs(vector, 0, vector->size - 1);
+
+  FILE *file = fopen(file_name, "w");
+  if (file) {
+    for (int i = 0; i < vector->size; ++i) {
+      // printf("%d %f\n", vector.arr[i].first, vector.arr[i].second);
+      fprintf(file, "%d %f\n", vector->arr[i].first, vector->arr[i].second);
+    }
+
+    fclose(file);
+    return 0;
+  }
+  return ERROR_CODE;
+}
+
+typedef struct {
+  char my_user_path[_BUFFER_SIZE];
+  vector_pairs_int_double *vector;
+} args_struct;
+
+static void *list_objs_rec_for_user(void *args) {
+  if (unlikely(!args)) {
+    return (void*)ERROR_CODE;
+  }
+
+  args_struct *arg = (args_struct *)args;
+
+  user my_user = read_user_from_file(arg->my_user_path);
+  int i = 0;
+  while ((my_user.rec_objs_list.size < _NUM_REC_FOR_USER) &&
+         (i < arg->vector->size)) {
+    if (!in(&my_user.objs_list, arg->vector->arr[i].first)) {
+      push_back(&my_user.rec_objs_list, arg->vector->arr[i].first);
+    }
+    i++;
+  }
+
+  write_user_to_file(&my_user, arg->my_user_path);
+
+  free_list(&my_user.objs_list);
+  free_list(&my_user.rec_objs_list);
+  free(arg);
+
+  return NULL;
+}
+
+int create_recomendations_parallel(const char *users_files_path,
+                                   const char *objs_files_path,
+                                   const char *objs_rank_file,
+                                   const int _max_thread_num) {
+  vector_pairs_int_double vector = get_objs_vector(objs_files_path);
+  int rank_file_exit_code = create_objs_rank_file(&vector, objs_rank_file);
+  if (unlikely(rank_file_exit_code == ERROR_CODE)) {
+    return ERROR_CODE;
+  }
+
+  DIR *dir = opendir(users_files_path);
+  struct dirent *entity;
+  entity = readdir(dir);
+
+  pthread_t *threads = (pthread_t *)malloc(sizeof(pthread_t) * _max_thread_num);
+  int thread_i = 0;
+  while (entity != NULL) {
+    // .DS_Store protection edded :)
+    if ((entity->d_type != DT_DIR) && (strchr(entity->d_name, '.') == 0)) {
+      char path[_BUFFER_SIZE] = {0};
+      strcat(path, users_files_path);
+      strcat(path, entity->d_name);
+
+      args_struct *args = (args_struct *)malloc(sizeof(args_struct));
+      strcpy(args->my_user_path, path);
+      args->vector = &vector;
+
+      // printf("%s; vector size out of thread = %d\n", args->my_user_path,
+      // args->vector->size);
+      int rec_objs_exit_code = pthread_create(&threads[thread_i], NULL,
+                                              list_objs_rec_for_user, args);
+      if (unlikely(rec_objs_exit_code == ERROR_CODE)) {
+        return ERROR_CODE;
+      }
+      thread_i++;
+    }
+
+    if (thread_i == _max_thread_num) {
+      for (int i = 0; i < thread_i; ++i) {
+        pthread_join(threads[i], NULL);
+      }
+      thread_i = 0;
+    }
+    entity = readdir(dir);
+  }
+
+  for (int i = 0; i < thread_i; ++i) {
+    pthread_join(threads[i], NULL);
+  }
+  thread_i = 0;
+
+  free(threads);
+  free(vector.arr);
+  closedir(dir);
+  return 0;
+}
