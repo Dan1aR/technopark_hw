@@ -30,10 +30,9 @@ set(FIND_CONSISTENT_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_consisten
 add_library(find_consistent_lib STATIC ${FIND_CONSISTENT_LIB})
 target_include_directories(find_consistent_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-set(FIND_PARALLEL_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_parallel/libdataproc_parallel.c lib_parallel/tools.c generator/generator.c src/timer.c)
+set(FIND_PARALLEL_LIB  ${PROJECT_SOURCE_DIR}/include/libdtools.h lib_parallel/libdataproc_parallel.c lib_consistent/tools.c generator/generator.c src/timer.c)
 add_library(find_parallel_lib SHARED ${FIND_PARALLEL_LIB})
 target_include_directories(find_parallel_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
 
 # Build main
 add_executable(${PROJECT_NAME} src/main.c)
