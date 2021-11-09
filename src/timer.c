@@ -8,10 +8,10 @@ int timer(int (*func)(const char *users_files_path, const char *objs_files_path,
         return ERROR_CODE;
     }
 
-    clock_t start, stop;
-
     if (_max_thread_num == 0) {
+        clock_t start, stop;
         start = clock();
+        
         int create_rec_exit_code = func(users_files_path, objs_files_path, objs_rank_file, 0);
         if (unlikely(create_rec_exit_code != 0)) {
             return ERROR_CODE;
