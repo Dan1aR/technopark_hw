@@ -70,7 +70,7 @@ script:
      - cd build/
      - cmake .. 
      - make
-    # - ctest
+     - ctest
      - valgrind --tool=memcheck --leak-check=full --error-exitcode=1 ./hw2 ../files/users/ ../files/objs/ ../files/objs_rank 100
      - cd ..
      - cppcheck ./*/*.c ./*/*.cpp ./*/*.h
