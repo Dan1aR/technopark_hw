@@ -21,8 +21,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-g -O0 -Wall -Werror  -fprofile-arcs -ftest-coverage -fPIC")
 set(CMAKE_C_FLAGS "-g -O0 -Wall -Werror -fprofile-arcs -ftest-coverage -fPIC -pthread")
 
-# add_compile_options(-fsanitize=address -fsanitize=undefined)
-# add_link_options(-fsanitize=address -fsanitize=undefined)
+add_compile_options(-fsanitize=address -fsanitize=undefined)
+add_link_options(-fsanitize=address -fsanitize=undefined)
 
 include_directories(include)
 
@@ -40,12 +40,12 @@ target_link_libraries(${PROJECT_NAME} PRIVATE find_consistent_lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE find_parallel_lib -ldl)
 
 # Build test
-enable_testing()
-include(GoogleTest)
-find_package(Threads REQUIRED)
+# enable_testing()
+# include(GoogleTest)
+# find_package(Threads REQUIRED)
 
-include_directories(${GTEST_INCLUDE_DIRS})
+# include_directories(${GTEST_INCLUDE_DIRS})
 
-add_executable(libgtest tests/gtests.cpp src/timer.c)
-target_link_libraries(libgtest ${GTEST_LIBRARIES} find_consistent_lib find_parallel_lib -ldl gtest_main)
-gtest_add_tests(TARGET libgtest)
+# add_executable(libgtest tests/gtests.cpp src/timer.c)
+# target_link_libraries(libgtest ${GTEST_LIBRARIES} find_consistent_lib find_parallel_lib -ldl gtest_main)
+# gtest_add_tests(TARGET libgtest)
