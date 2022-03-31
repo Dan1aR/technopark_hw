@@ -13,7 +13,8 @@ class TestTicTac(TestCase):
     def test_validate_move_format(self):
         """ Testting validate function to input has right format """
         game = TicTacGame()
-        self.assertTrue(game.validate_move("1")[0])
+        for move in range(1, 10):
+            self.assertTrue(game.validate_move(str(move))[0])
         self.assertFalse(game.validate_move("qwer")[0])
         self.assertFalse(game.validate_move("0")[0])
         self.assertFalse(game.validate_move("123")[0])
@@ -42,52 +43,110 @@ class TestTicTac(TestCase):
         """ Testting check winner function in every possible way"""
         game = TicTacGame()
 
-        game.board = ["X", "X", "X", "O", " ", " ", "O", " ", " "]
+        game.board = [
+            "X", "X", "X",
+            "O", " ", " ",
+            "O", " ", " "
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.X_WINNER_TEXT)
 
-        game.board = ["O", "O", "O", "X", " ", " ", "X", " ", " "]
+        game.board = [
+            "O", "X", "O",
+            "O", "O", "O",
+            "X", " ", " "
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.O_WINNER_TEXT)
 
-        game.board = ["X", "O", "O", "X", " ", " ", "X", " ", " "]
+        game.board = [
+            "O", "X", "O",
+            "O", " ", " ",
+            "O", "O", "O"
+        ]
+        is_winner, message = game.check_winner()
+        self.assertTrue(is_winner)
+        self.assertEqual(message, Text.O_WINNER_TEXT)
+
+        game.board = [
+            "X", "O", "O",
+            "X", " ", " ",
+            "X", " ", " "
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.X_WINNER_TEXT)
 
-        game.board = ["O", "X", "X", "O", " ", " ", "O", " ", " "]
+        game.board = [
+            "X", "O", "X",
+            "X", "O", " ",
+            " ", "O", " "
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.O_WINNER_TEXT)
 
-        game.board = ["X", " ", " ", "O", "X", " ", "O", " ", "X"]
+        game.board = [
+            "X", " ", "O",
+            "X", "X", "O",
+            "O", " ", "O"
+        ]
+        is_winner, message = game.check_winner()
+        self.assertTrue(is_winner)
+        self.assertEqual(message, Text.O_WINNER_TEXT)
+
+        game.board = [
+            "X", " ", " ",
+            "O", "X", " ",
+            "O", " ", "X"
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.X_WINNER_TEXT)
 
-        game.board = ["O", " ", " ", "X", "O", " ", "X", " ", "O"]
+        game.board = [
+            "X", " ", "O",
+            "X", "O", " ",
+            "O", " ", "X"
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.O_WINNER_TEXT)
 
-        game.board = [" ", " ", "X", " ", "X", "O", "X", " ", "O"]
+        game.board = [
+            " ", " ", "X",
+            " ", "X", "O",
+            "X", " ", "O"
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.X_WINNER_TEXT)
 
-        game.board = [" ", " ", "O", " ", "O", "X", "O", " ", "X"]
+        game.board = [
+            " ", " ", "O",
+            " ", "O", "X",
+            "O", " ", "X"
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.O_WINNER_TEXT)
 
-        game.board = ["O", "X", "X", "X", "O", "O", "O", "X", "X"]
+        game.board = [
+            "O", "X", "X",
+            "X", "O", "O",
+            "O", "X", "X"
+        ]
         is_winner, message = game.check_winner()
         self.assertTrue(is_winner)
         self.assertEqual(message, Text.DRAW_TEXT)
 
-        game.board = [" ", " ", " ", " ", "O", "X", "O", " ", "X"]
+        game.board = [
+            " ", " ", " ",
+            " ", "O", "X",
+            "O", " ", "X"
+        ]
         is_winner, message = game.check_winner()
         self.assertFalse(is_winner)
 
