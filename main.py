@@ -68,13 +68,12 @@ class TicTacGame:
             move_count += 1
 
             is_winner, message = self.check_winner()
-	    
         print(message)
 
     def check_winner(self):
-        """Method checks rows, columns and diagonales to find out if there is a winner on board"""
+        """Checks rows, columns and diagonales to find if there is a winner"""
 
-        rows = {"".join(self.board[3 * i : 3 * i + 3]) for i in range(3)}
+        rows = {"".join(self.board[3 * i: 3 * i + 3]) for i in range(3)}
         columns = {
             "".join([self.board[i], self.board[i + 3], self.board[i + 6]])
             for i in range(3)
