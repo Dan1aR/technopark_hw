@@ -1,4 +1,4 @@
-""" Testting parse_html function """
+""" Testting parse_html function and callbacks """
 from unittest import TestCase
 from unittest.mock import patch
 import unittest
