@@ -1,154 +1,68 @@
-""" Imports for testting and TicTacToe class """
+""" Testting parse_html function """
 from unittest import TestCase
-from unittest import mock
+from unittest.mock import patch
 import unittest
+from faker import Faker
 
-from main import TicTacGame
-from text import Text
+import main
 
 
-class TestTicTac(TestCase):
-    """ Testing main methods of TicTacToe game """
+class TestParseHTML(TestCase):
+    """ Testing parse_html and other functions """
 
-    def test_validate_move_format(self):
-        """ Testting validate function to input has right format """
-        game = TicTacGame()
-        for move in range(1, 10):
-            self.assertTrue(game.validate_move(str(move))[0])
-        self.assertFalse(game.validate_move("qwer")[0])
-        self.assertFalse(game.validate_move("0")[0])
-        self.assertFalse(game.validate_move("123")[0])
+    def test_open_tag_process(self):
+        """ Testing open_tags_process on small data """
+        main.open_tags_count = {}
+        main.open_tag_process('h1')
+        main.open_tag_process('h1')
+        open_tags_count = main.open_tag_process('a')
+        self.assertEqual(open_tags_count, {'h1': 2, 'a': 1})
 
-    def test_validate_move_place(self):
-        """ Testting validate function if we put move in right place """
-        game = TicTacGame()
-        mock.builtins.input = lambda _: "1"
-        game.move(0)
-        self.assertEqual(game.board[0], "X")
-        self.assertFalse(game.validate_move("1")[0])
+    def test_data_process(self):
+        """ Testing data_process with Faker """
+        fake = Faker(locale="Ru_ru")
+        content = [fake.text(100) for _ in range(10)]
+        content.append(fake.text(500))
 
-    def test_move(self):
-        """ Testting move function as it affecting board """
-        game = TicTacGame()
+        for _content in content:
+            max_len = main.data_process(_content)
 
-        mock.builtins.input = lambda _: "1"
-        game.move(0)
-        self.assertEqual(game.board[0], "X")
+        self.assertEqual(max_len, len(content[-1]))
 
-        mock.builtins.input = lambda _: "2"
-        game.move(1)
-        self.assertEqual(game.board[1], "O")
+    def test_close_tag_process(self):
+        """ Testing close_tags_process on small data """
+        main.open_tags_count = {}
+        main.open_tag_process('h1')
+        main.open_tag_process('h1')
+        main.open_tag_process('a')
+        self.assertEqual(main.close_tag_process(), 'h1')
 
-    def test_check_winner(self):
-        """ Testting check winner function in every possible way"""
-        game = TicTacGame()
+    @patch('main.open_tag_process', return_value=None)
+    @patch('main.data_process', return_value=None)
+    @patch('main.close_tag_process', return_value=None)
+    def test_parse_html(self, otag_mock, data_mock, ctag_mock):
+        """ Testing parse_html using mocks and Faker """
+        fake = Faker()
 
-        game.board = [
-            "X", "X", "X",
-            "O", " ", " ",
-            "O", " ", " "
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.X_WINNER_TEXT)
+        content = fake.text(100)
 
-        game.board = [
-            "O", "X", "O",
-            "O", "O", "O",
-            "X", " ", " "
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.O_WINNER_TEXT)
+        html_str = content
+        tags = []
+        for _ in range(10):
+            tag_text = fake.text(5)
+            tags.append(tag_text)
+            html_str = f"<{tag_text}>{html_str}</{tag_text}>"
 
-        game.board = [
-            "O", "X", "O",
-            "O", " ", " ",
-            "O", "O", "O"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.O_WINNER_TEXT)
+        data = {tags[0]: [content]}
+        for tag in tags[1:]:
+            data = {tag: [data]}
 
-        game.board = [
-            "X", "O", "O",
-            "X", " ", " ",
-            "X", " ", " "
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.X_WINNER_TEXT)
+        json = main.parse_html(html_str, otag_mock, data_mock, ctag_mock)
 
-        game.board = [
-            "X", "O", "X",
-            "X", "O", " ",
-            " ", "O", " "
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.O_WINNER_TEXT)
-
-        game.board = [
-            "X", " ", "O",
-            "X", "X", "O",
-            "O", " ", "O"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.O_WINNER_TEXT)
-
-        game.board = [
-            "X", " ", " ",
-            "O", "X", " ",
-            "O", " ", "X"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.X_WINNER_TEXT)
-
-        game.board = [
-            "X", " ", "O",
-            "X", "O", " ",
-            "O", " ", "X"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.O_WINNER_TEXT)
-
-        game.board = [
-            " ", " ", "X",
-            " ", "X", "O",
-            "X", " ", "O"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.X_WINNER_TEXT)
-
-        game.board = [
-            " ", " ", "O",
-            " ", "O", "X",
-            "O", " ", "X"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.O_WINNER_TEXT)
-
-        game.board = [
-            "O", "X", "X",
-            "X", "O", "O",
-            "O", "X", "X"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertTrue(is_winner)
-        self.assertEqual(message, Text.DRAW_TEXT)
-
-        game.board = [
-            " ", " ", " ",
-            " ", "O", "X",
-            "O", " ", "X"
-        ]
-        is_winner, message = game.check_winner()
-        self.assertFalse(is_winner)
+        self.assertEqual(otag_mock.call_count, 10)
+        self.assertEqual(data_mock.call_count, 2*10+1)
+        self.assertEqual(ctag_mock.call_count, 10)
+        self.assertEqual(json, [data])
 
 
 if __name__ == "__main__":

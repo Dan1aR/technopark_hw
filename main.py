@@ -1,104 +1,110 @@
-""" Text collections """
-from text import Text
+""" Contains function to parse your valid html """
+# CONSTS
+OPEN_TAG = '_open'
+VALUE_TAG = '_value'
+CLOSE_TAG = '_close'
+START_OF_SEQUENCE = 'SOS'
+
+open_tags_count = {}
+max_data_len = 0
 
 
-class TicTacGame:
-    """TicTacToe gameplay implementation"""
+def open_tag_process(tag):
+    """ Counts amount of every tag """
+    global open_tags_count
+    if tag in open_tags_count:
+        open_tags_count[tag] += 1
+    else:
+        open_tags_count[tag] = 1
+    return open_tags_count
 
-    def __init__(self) -> None:
-        self.board = [" " for _ in range(9)]
 
-    def show_board(self):
-        """Harcoded prints to show self.board"""
-        print("\n")
-        print("\t     |     |")
-        print(f"\t  {self.board[0]}  |  {self.board[1]}  |  {self.board[2]}")
-        print("\t_____|_____|_____")
+def data_process(content):
+    """ Calculates max len of data """
+    global max_data_len
+    max_data_len = max(max_data_len, len(content))
+    return max_data_len
 
-        print("\t     |     |")
-        print(f"\t  {self.board[3]}  |  {self.board[4]}  |  {self.board[5]}")
-        print("\t_____|_____|_____")
 
-        print("\t     |     |")
-        print(f"\t  {self.board[6]}  |  {self.board[7]}  |  {self.board[8]}")
-        print("\t     |     |")
-        print("\n")
+def close_tag_process():
+    """ Finds most frequent tag """
+    global open_tags_count
+    return max(open_tags_count, key=lambda x: open_tags_count[x])
 
-    def move(self, move_count):
-        """Read Users input validating it and move"""
-        move = input(">> ")
-        is_valid, message = self.validate_move(move)
-        while not is_valid:
-            print(message)
-            move = input(">> ")
-            is_valid, message = self.validate_move(move)
 
-        move = int(move)
-        move_char = "X" if move_count % 2 == 0 else "O"
-        self.board[move - 1] = move_char
+def parse_html(html_str, open_tag_callback, data_callback, close_tag_callback):
+    """ Generate dict from html """
+    def generate_dict(idx=0):
+        """ Returns len(stack_tags), ['SOS': PARSED HTML HERE]"""
+        nonlocal stack_tags
 
-    def validate_move(self, move):
-        """Validating string to convert to move"""
-        try:
-            move = int(move)
-            if move not in range(1, 10):
-                return False, Text.NOT_IN_MODE_RANGE_TEXT
+        _tag, content = stack_tags[idx]
+        if _tag == OPEN_TAG:
+            next_idx, html_el = generate_dict(idx+1)
+            while stack_tags[next_idx][0] != CLOSE_TAG:
+                next_idx, sub_el = generate_dict(next_idx)
+                html_el += sub_el
+            html_el = {content: html_el}
+            idx, content = next_idx+1, [html_el]
 
-            if self.board[move - 1] != " ":
-                return False, Text.WRONG_PLACE_TEXT
+        if _tag == VALUE_TAG:
+            idx, content = idx+1, [content]
 
-            return move, ""
-        except ValueError:
-            return False, Text.NOT_INT_INPUT_TEXT
+        return idx, content
 
-    def start_game(self):
-        """Main for this class"""
-        move_count = 0
-        is_winner, message = self.check_winner()
-        while not is_winner:
-            print(message)
-            if move_count % 2 == 0:
-                print(Text.X_MOVE_TEXT)
-                self.move(move_count)
-            else:
-                print(Text.O_MOVE_TEXT)
-                self.move(move_count)
+    stack_tags = [(OPEN_TAG, START_OF_SEQUENCE)]
 
-            self.show_board()
-            move_count += 1
+    sub_str = ""
+    stack = []
+    for char in html_str:
+        if char == "<":
+            data_callback(sub_str)
+            if sub_str and not sub_str.isspace():
+                stack_tags.append((VALUE_TAG, sub_str.strip()))
+            sub_str = ""
+            stack.append(char)
+        elif char == "/":
+            stack[-1] += char
+        elif char == ">":
+            if stack[-1] == "<":
+                open_tag_callback(sub_str)
+                stack_tags.append((OPEN_TAG, sub_str.strip()))
+            if stack[-1] == "</":
+                close_tag_callback()
+                stack_tags.append((CLOSE_TAG, sub_str.strip()))
+            stack.append(char)
+            sub_str = ""
+        else:
+            sub_str += char
 
-            is_winner, message = self.check_winner()
-        print(message)
+    data_callback(sub_str)
+    if sub_str and not sub_str.isspace():
+        stack_tags.append((VALUE_TAG, sub_str.strip()))
 
-    def check_winner(self):
-        """Checks rows, columns and diagonales to find if there is a winner"""
-
-        rows = {"".join(self.board[3 * i: 3 * i + 3]) for i in range(3)}
-        columns = {
-            "".join([self.board[i], self.board[i + 3], self.board[i + 6]])
-            for i in range(3)
-        }
-        diagonals = set(
-            [
-                "".join([self.board[0], self.board[4], self.board[8]]),
-                "".join([self.board[6], self.board[4], self.board[2]]),
-            ]
-        )
-
-        if "XXX" in rows | columns | diagonals:
-            return True, Text.X_WINNER_TEXT
-
-        if "OOO" in rows | columns | diagonals:
-            return True, Text.O_WINNER_TEXT
-
-        if " " not in self.board:
-            return True, Text.DRAW_TEXT
-
-        return False, ""
+    stack_tags.append((CLOSE_TAG, START_OF_SEQUENCE))
+    return generate_dict()[-1][0][START_OF_SEQUENCE]
 
 
 if __name__ == "__main__":
-    print(Text.HELLO_TEXT)
+    HTML = """
+        <h1>They were not!</h1>
+        <p> <h2> Their memory serves as an example to us all! </h2>
+        The courageous fallen! The anguished fallen! </p>
+        <p> Their lives have meaning because </p>
+        <p> we the living refuse to forget them! </p>
+        <div>
+        <class> <a> And as we ride to certain death, </a>
+        <a> we trust our successors to do the same for us! </a>
+        <a> Because my soldiers do not buckle or yield </a>
+        <a> when faced with the cruelty of this world! </a> </class>
+        </div>
+        <h3> My soldiers push forward! </h3>
+        <h2> My soldiers scream out! </h2>
+        <h1> My soldiers RAAAAAGE! </h1>
+    """
 
-    game = TicTacGame()
-    game.start_game()
+    print(parse_html(HTML, open_tag_process, data_process, close_tag_process))
+
+    print(f"Open tags statistic: {open_tags_count}")
+    print(f"Max data len = {max_data_len}")
+    print(f"Tags most frequent: {close_tag_process()}")
