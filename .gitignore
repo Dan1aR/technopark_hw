@@ -2,3 +2,5 @@
 main.py
 .coverage
 /htmlcov/
+.DS_Store
+hw3_proba2.zip

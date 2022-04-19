@@ -7,6 +7,11 @@ from custom_list import CustomList
 
 class TestCustomList(TestCase):
     """ Testing CustomList and its functions """
+    def assert_equal_foreach(self, first, second):
+        """ Equal for each element """
+        self.assertEqual(len(first), len(second))
+        for left, right in zip(first, second):
+            self.assertEqual(left, right)
 
     def test_str(self):
         """ Testing Custom str """
@@ -18,25 +23,157 @@ class TestCustomList(TestCase):
         """ Testing Custom add """
         list1 = CustomList([1, 2, 3, 4, 5])
         list2 = CustomList([1, 2, 3])
-
-        self.assertEqual([2, 4, 6, 4, 5], list1 + list2)
+        ans = list1 + list2
+        self.assert_equal_foreach([2, 4, 6, 4, 5], ans)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
 
         list1 = CustomList([5, 4, 3])
         list2 = CustomList([1, 2, 3, 4, 5])
+        ans = list1 + list2
+        self.assert_equal_foreach([6, 6, 6, 4, 5], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list2)
+        self.assertIsInstance(ans, CustomList)
 
-        self.assertEqual([6, 6, 6, 4, 5], list1 + list2)
+        list1 = CustomList([5, 4, 3])
+        list2 = CustomList([1, 2, 3])
+        ans = list1 + list2
+        self.assert_equal_foreach([6, 6, 6], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+    def test_add_with_list_left(self):
+        """ Testing Custom add with list """
+        list1 = [1, 2, 3, 4, 5]
+        list2 = CustomList([1, 2, 3])
+        ans = list1 + list2
+        self.assert_equal_foreach([2, 4, 6, 4, 5], ans)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = [5, 4, 3]
+        list2 = CustomList([1, 2, 3, 4, 5])
+        ans = list1 + list2
+        self.assert_equal_foreach([6, 6, 6, 4, 5], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = [5, 4, 3]
+        list2 = CustomList([1, 2, 3])
+        ans = list1 + list2
+        self.assert_equal_foreach([6, 6, 6], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+    def test_add_with_list_right(self):
+        """ Testing Custom add with list """
+        list1 = CustomList([1, 2, 3, 4, 5])
+        list2 = [1, 2, 3]
+        ans = list1 + list2
+        self.assert_equal_foreach([2, 4, 6, 4, 5], ans)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = CustomList([5, 4, 3])
+        list2 = [1, 2, 3, 4, 5]
+        ans = list1 + list2
+        self.assert_equal_foreach([6, 6, 6, 4, 5], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = CustomList([5, 4, 3])
+        list2 = [1, 2, 3]
+        ans = list1 + list2
+        self.assert_equal_foreach([6, 6, 6], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
 
     def test_sub(self):
         """ Testing Custom sub """
         list1 = CustomList([1, 2, 3, 4, 5])
         list2 = CustomList([1, 2, 3])
-
-        self.assertEqual([0, 0, 0, 4, 5], list1 - list2)
+        ans = list1 - list2
+        self.assert_equal_foreach([0, 0, 0, 4, 5], ans)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
 
         list1 = CustomList([5, 4, 3])
         list2 = CustomList([1, 2, 3, 4, 5])
+        ans = list1 - list2
+        self.assert_equal_foreach([4, 2, 0, -4, -5], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list2)
+        self.assertIsInstance(ans, CustomList)
 
-        self.assertEqual([4, 2, 0, 4, 5], list1 - list2)
+        list1 = CustomList([5, 4, 3])
+        list2 = CustomList([1, 2, 3])
+        ans = list1 - list2
+        self.assert_equal_foreach([4, 2, 0], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+    def test_sub_with_list_left(self):
+        """ Testing Custom sub with list"""
+        list1 = [1, 2, 3, 4, 5]
+        list2 = CustomList([1, 2, 3])
+        ans = list1 - list2
+        self.assert_equal_foreach([0, 0, 0, 4, 5], ans)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = [5, 4, 3]
+        list2 = CustomList([1, 2, 3, 4, 5])
+        ans = list1 - list2
+        self.assert_equal_foreach([4, 2, 0, -4, -5], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = [5, 4, 3]
+        list2 = CustomList([1, 2, 3])
+        ans = list1 - list2
+        self.assert_equal_foreach([4, 2, 0], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+    def test_sub_with_list_right(self):
+        """ Testing Custom sub with list """
+        list1 = CustomList([1, 2, 3, 4, 5])
+        list2 = [1, 2, 3]
+        ans = list1 - list2
+        self.assert_equal_foreach([0, 0, 0, 4, 5], ans)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = CustomList([5, 4, 3])
+        list2 = [1, 2, 3, 4, 5]
+        ans = list1 - list2
+        self.assert_equal_foreach([4, 2, 0, -4, -5], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3, 4, 5], list2)
+        self.assertIsInstance(ans, CustomList)
+
+        list1 = CustomList([5, 4, 3])
+        list2 = [1, 2, 3]
+        ans = list1 - list2
+        self.assert_equal_foreach([4, 2, 0], ans)
+        self.assert_equal_foreach([5, 4, 3], list1)
+        self.assert_equal_foreach([1, 2, 3], list2)
+        self.assertIsInstance(ans, CustomList)
 
     def test_eq(self):
         """ Testing Custom eq """
