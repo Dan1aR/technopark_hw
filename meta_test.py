@@ -32,6 +32,11 @@ class TestCustomClass(TestCase):
         self.assertFalse('new_attr' in dir(inst))
         self.assertEqual(inst.custom_new_attr, 10)
 
+    def test_str(self):
+        ''' Test __str__ method'''
+        inst = CustomClass()
+        self.assertEqual("Custom_by_metaclass", str(inst))
+
 
 if __name__ == "__main__":
     unittest.main()

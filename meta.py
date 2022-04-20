@@ -17,12 +17,11 @@ class CustomMeta(type):
         new_dict = CustomMeta.__correct(classdict)
         return super().__new__(cls, name, bases, new_dict)
 
-    def __custom_set(cls, __name, __value):
-        if '__' != __name[:2] and '__' != __name[-2:]:
-            __name = 'custom_' + __name
-        cls.__dict__[__name] = __value
+    def __custom_set(cls, name, value):
+        if '__' != name[:2] and '__' != name[-2:]:
+            name = 'custom_' + name
+        cls.__dict__[name] = value
 
-    @classmethod
     def __prepare__(cls, *args):
         return {'__setattr__': CustomMeta.__custom_set}
 
