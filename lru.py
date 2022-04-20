@@ -25,10 +25,10 @@ class LRUCache:
         ''' LRUcache set method'''
         if key in self.cache:
             self.keys.remove(key)
-        else:
-            if self.full:
-                last_key = self.keys[-1]
-                self.cache.pop(last_key)
+        elif self.full:
+            last_key = self.keys[-1]
+            self.cache.pop(last_key)
+            self.keys = self.keys[:-1]
 
         self.cache[key] = value
         self.keys.insert(0, key)

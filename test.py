@@ -113,5 +113,46 @@ class TestDataDesc(TestCase):
         self.assertEqual(len(cache), 3)
 
 
+    def test_limit1(self):
+        ''' Test LRU with limit = 1'''
+        cache = LRUCache(1)
+        cache['k1'] = 1
+        self.assertTrue('k1' in cache.cache)
+
+        cache['k2'] = 2
+        self.assertFalse('k1' in cache.cache)
+        self.assertTrue('k2' in cache.cache)
+
+        cache['k3'] = 3
+        self.assertFalse('k2' in cache.cache)
+        self.assertTrue('k3' in cache.cache)
+
+        cache['k4'] = 4
+        self.assertFalse('k3' in cache.cache)
+        self.assertTrue('k4' in cache.cache)
+
+    def test_complete_displacement(self):
+        ''' Test LRU with full el-s displasment '''
+
+        cache = LRUCache(3)
+        cache['k1'] = 1
+        cache['k2'] = 2
+        cache['k3'] = 3
+
+        self.assertTrue('k1' in cache.cache)
+        self.assertTrue('k2' in cache.cache)
+        self.assertTrue('k3' in cache.cache)
+
+        cache['k4'] = 4
+        cache['k5'] = 5
+        cache['k6'] = 6
+
+        self.assertFalse('k1' in cache.cache)
+        self.assertFalse('k2' in cache.cache)
+        self.assertFalse('k3' in cache.cache)
+        self.assertTrue('k4' in cache.cache)
+        self.assertTrue('k5' in cache.cache)
+        self.assertTrue('k6' in cache.cache)
+
 if __name__ == "__main__":
     unittest.main()
