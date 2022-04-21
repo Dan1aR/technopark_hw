@@ -42,20 +42,18 @@ class TestDataDesc(TestCase):
 
     def test_assign_exceptions(self):
         """ Testing exceptions with assignment"""
+        inst = Data(2, 'Wo', 5)
         with self.assertRaises(IntegerExeption):
-            inst = Data(2, 'Wo', 5)
             inst.num = 2.5
-            self.assertEqual(2.5, inst.num)
+        self.assertEqual(2, inst.num)
 
         with self.assertRaises(StringExeption):
-            inst = Data(2, 'Wo', 5)
             inst.name = 4
-            self.assertEqual(4, inst.name)
+        self.assertEqual('Wo', inst.name)
 
         with self.assertRaises(PositiveExeption):
-            inst = Data(2, 'Wo', 5)
             inst.price = -5
-            self.assertEqual(-5, inst.price)
+        self.assertEqual(5, inst.price)
 
     def test_fromat_answer(self):
         """ Testing format answer func """
