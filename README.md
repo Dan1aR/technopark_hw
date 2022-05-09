@@ -16,6 +16,7 @@ Predict:
     python3 -m src.predict_pipeline configs/predict_config.yaml
 
 Tests:
+------------
     pytest tests/
 
 Project Organization
