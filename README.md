@@ -3,13 +3,20 @@ MLProd HW1
 
 First homework for MlProd in Technopark (VK & BMSTU)
 
+Installation:
+------------
+    pip3 -r requirments.txt
+
 Train:
 ------------
     python3 -m src.train_pipeline configs/train_config.yaml
 
-Test:
+Predict:
 ------------
     python3 -m src.predict_pipeline configs/predict_config.yaml
+
+Tests:
+    pytest tests/
 
 Project Organization
 ------------
