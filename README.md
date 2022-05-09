@@ -5,7 +5,11 @@ First homework for MlProd in Technopark (VK & BMSTU)
 
 Train:
 ------------
-    python -m src.train_pipeline configs/train_config.yaml
+    python3 -m src.train_pipeline configs/train_config.yaml
+
+Test:
+------------
+    python3 -m src.predict_pipeline configs/predict_config.yaml
 
 Project Organization
 ------------
@@ -58,4 +62,3 @@ Project Organization
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>

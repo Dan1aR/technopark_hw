@@ -1,5 +1,7 @@
 # local package
 marshmallow-dataclass
+prettyprinter
+mlflow
 -e .
 
 # external requirements
