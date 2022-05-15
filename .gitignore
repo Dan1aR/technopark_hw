@@ -1,0 +1,5 @@
+__pycache__/
+stopable_thread.py
+test_server.py
+*.zip
+.DS_Store
