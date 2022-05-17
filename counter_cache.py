@@ -1,6 +1,6 @@
 from itertools import islice
 
-class CCash:
+class CCache:
     def __init__(self, elems: list=[], top_k=10, ignore_tags='./ignore_tags.txt') -> None:
         self.data = {}
         self.top_k = top_k
