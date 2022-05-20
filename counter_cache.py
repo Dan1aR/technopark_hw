@@ -1,7 +1,7 @@
 from itertools import islice
 
 class CCache:
-    def __init__(self, elems: list=[], top_k=10, ignore_tags='./ignore_tags.txt') -> None:
+    def __init__(self, elems: list=[], top_k=10, ignore_tags='./ignore_tags.txt'):
         self.data = {}
         self.top_k = top_k
         if ignore_tags:
@@ -10,12 +10,19 @@ class CCache:
         for el in elems:
             self.add(el)
 
-    def add(self, el) -> None:
+    def add(self, el):
         if not el in self.tags:
             if el in self.data:
                 self.data[el] += 1
             else:
                 self.data[el] = 1
+            
+    def extend(self, elems: list):
+        for el in elems:
+            self.add(el)
+
+    def clear(self):
+        self.data = {}
 
     def get_top_k(self):
         res = dict(sorted(self.data.items(), key=lambda item: item[1], reverse=True))

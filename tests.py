@@ -5,14 +5,46 @@
 '''
 
 import asyncio
+from linecache import cache
 import os
 import unittest
 
 import aiohttp
 from aiohttp.test_utils import AioHTTPTestCase
+from unittest.mock import MagicMock
 
 import fetcher
 from counter_cache import CCache
+
+
+class MockSessionResp:
+    '''
+        Awaitable mock object
+    '''
+    async def __aenter__(self):   
+        return self
+    
+    async def __aexit__(self, *args, **kwargs):
+        await asyncio.sleep(0)
+
+    async def read(self):
+        html_test = b"""
+            <h1>They were not!</h1>
+            <p> <h2> Their memory serves as an example to us all! </h2>
+            The courageous fallen! The anguished fallen! </p>
+            <p> Their lives have meaning because </p>
+            <p> we the living refuse to forget them! </p>
+            <div>
+            <class> <a> And as we ride to certain death, </a>
+            <a> we trust our successors to do the same for us! </a>
+            <a> Because my soldiers do not buckle or yield </a>
+            <a> when faced with the cruelty of this world! </a> </class>
+            </div>
+            <h3> My soldiers push forward! </h3>
+            <h2> My soldiers scream out! </h2>
+            <h1> My soldiers RAAAAAGE! </h1>
+        """
+        return html_test
 
 
 class FetcherTest(AioHTTPTestCase):
@@ -23,7 +55,7 @@ class FetcherTest(AioHTTPTestCase):
         self.urls_test = [
             'https://attackontitan.fandom.com\n',
             'https://attackontitan.fandom.com/wiki/Levi_Ackermann_(Anime)\n',
-            'https://attackontitan.fandom.com/wiki/Eren_Jaeger_(Anime)\n',
+            'https://attackontitan.fandom.com/wiki/Eren_Jaeger_(Anime)\n'
         ]
         self.urls_file = 'urls_test.txt'
         with open(self.urls_file, 'w', encoding='utf-8') as fout:
@@ -38,95 +70,95 @@ class FetcherTest(AioHTTPTestCase):
             It could probably Fail, web-siyes might change
             but right now it works :)
         '''
-        result = {}
-        await fetcher.crawl(
-            result,
-            urls_path=self.urls_file,
-            batch_size=5,
-            n_threads=5
-        )
-
-        expected = {
-                "http://example.com": {
-                    "width": 5, "domain": 4, "example": 3,
-                    "content": 3, "text": 3, "color": 3,
-                    "margin": 3, "auto": 3, "in": 3,
-                    "charset": 2
-                },
-                "https://attackontitan.fandom.com": {
-                    'wiki': 1054, 'wds': 905, 'data': 897,
-                    'fandom': 711, 'com': 640, 'level': 524,
-                    'anime': 509, 'tracking': 506, 'image': 440,
-                    'http': 434
-                },
-                "https://attackontitan.fandom.com/wiki/Levi_Ackermann_(Anime)": {
-                    'levi': 1105, 'the': 1094,
-                    'data': 1060, 'anime': 1037,
-                    'wiki': 1009, 'wds': 889, 'to': 827,
-                    'png': 590, 'titan': 583, 'fandom': 550
-                },
-                "https://attackontitan.fandom.com/wiki/Eren_Jaeger_(Anime)": {
-                    'the': 1850, 'anime': 1599, 'eren': 1573,
-                    'to': 1414, 'data': 1366, 'wiki': 1247,
-                    'titan': 1219, 'wds': 849, 'and': 786,
-                    'image': 755
-                }
-            }
-
-        self.assertDictEqual(result, expected)
-
-    async def test_fetch(self):
-        '''
-            Testing Fetch function - you could experience
-            same issues as with crawl test
-
-            Fetch is a small part of crawl
-        '''
-        result = {}
-
-        test_q = asyncio.Queue()
-        await test_q.put(self.urls_test[0].strip())
 
         async with aiohttp.ClientSession() as session:
-            task = asyncio.create_task(fetcher.fetch(
+            session.get = MagicMock(return_value=MockSessionResp())
+
+            result = {}
+            await fetcher.crawl(
                 result,
                 session,
-                test_q
-            ))
-
-            await test_q.join()
+                urls_path=self.urls_file,
+                batch_size=5,
+                n_threads=1
+            )
+        
+        print(result, len(result.keys()))
 
         expected = {
                 "https://attackontitan.fandom.com": {
-                    'wiki': 1054, 'wds': 905, 'data': 897,
-                    'fandom': 711, 'com': 640, 'level': 524,
-                    'anime': 509, 'tracking': 506, 'image': 440,
-                    'http': 434
+                    'the': 5, 'to': 4, 'my': 4, 'soldiers': 4,
+                    'we': 3, 'not': 2, 'their': 2,
+                    'as': 2, 'us': 2, 'fallen': 2
+                },
+                "https://attackontitan.fandom.com/wiki/Levi_Ackermann_(Anime)": {
+                    'the': 5, 'to': 4, 'my': 4, 'soldiers': 4,
+                    'we': 3, 'not': 2, 'their': 2,
+                    'as': 2, 'us': 2, 'fallen': 2
+                },
+                "https://attackontitan.fandom.com/wiki/Eren_Jaeger_(Anime)": {
+                    'the': 5, 'to': 4, 'my': 4, 'soldiers': 4,
+                    'we': 3, 'not': 2, 'their': 2,
+                    'as': 2, 'us': 2, 'fallen': 2
                 }
             }
 
-        print(result)
         self.assertDictEqual(result, expected)
 
-    async def test_read_urls(self):
-        '''
-            Test reading urls function
-            File generated in setUp method
-            and deleted by teardown method
-        '''
-        test_q = asyncio.Queue()
+    # async def test_fetch(self):
+    #     '''
+    #         Testing Fetch function - you could experience
+    #         same issues as with crawl test
 
-        await fetcher.read_urls(test_q, self.urls_file)
+    #         Fetch is a small part of crawl
+    #     '''
 
-        urls_result = []
-        while not test_q.empty():
-            urls_result.append(await test_q.get())
+    #     test_q = asyncio.Queue()
+    #     await test_q.put("https://attackontitan.fandom.com")
 
-        self.assertEqual(len(urls_result), len(self.urls_test))
-        self.assertEqual(
-            urls_result,
-            list(map(lambda url: url.strip(), self.urls_test))
-        )
+    #     async with aiohttp.ClientSession() as session:
+    #         session.get = MagicMock(return_value=MockSessionResp())
+            
+    #         result = {}
+    #         cache = CCache()
+    #         task = asyncio.create_task(fetcher.fetch(
+    #             result,
+    #             session,
+    #             test_q,
+    #             cache
+    #         ))
+
+    #         await test_q.join()
+
+    #     expected = {
+    #             "https://attackontitan.fandom.com": {
+    #                 'the': 5, 'to': 4, 'my': 4, 'soldiers': 4,
+    #                 'we': 3, 'not': 2, 'their': 2,
+    #                 'as': 2, 'us': 2, 'fallen': 2
+    #             }
+    #         }
+
+    #     self.assertDictEqual(result, expected)
+
+    # async def test_read_urls(self):
+    #     '''
+    #         Test reading urls function
+    #         File generated in setUp method
+    #         and deleted by teardown method
+    #     '''
+    #     test_q = asyncio.Queue()
+
+    #     await fetcher.read_urls(test_q, self.urls_file)
+
+    #     urls_result = []
+    #     while not test_q.empty():
+    #         urls_result.append(await test_q.get())
+
+    #     self.assertEqual(len(urls_result), len(self.urls_test))
+    #     self.assertEqual(
+    #         urls_result,
+    #         list(map(lambda url: url.strip(), self.urls_test))
+    #     )
 
 
 class TestCCache(unittest.TestCase):
@@ -158,6 +190,38 @@ class TestCCache(unittest.TestCase):
         self.assertEqual(cache.data, {
             f'word{i}': i for i in range(1, 6)
         })
+
+    def test_extend(self):
+        '''
+            test extending tokens
+        '''
+        elems = [
+            [f'word{j}' for i in range(j)]
+            for j in range(1, 6)
+        ]
+        elems = [item for sublist in elems for item in sublist]
+        cache = CCache()
+        cache.extend(elems)
+        self.assertEqual(cache.data, {
+            f'word{i}': i for i in range(1, 6)
+        })
+
+    def test_clear(self):
+        '''
+            test clearing
+        '''
+        elems = [
+            [f'word{j}' for i in range(j)]
+            for j in range(1, 6)
+        ]
+        elems = [item for sublist in elems for item in sublist]
+        cache = CCache()
+        cache.extend(elems)
+        self.assertEqual(cache.data, {
+            f'word{i}': i for i in range(1, 6)
+        })
+        cache.clear()
+        self.assertEqual(cache.data, {})
 
     def test_get_top_k(self):
         '''
