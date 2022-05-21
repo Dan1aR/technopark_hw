@@ -54,10 +54,8 @@ async def read_urls(urls_q, urls_path='urls.txt'):
         async for line in fin:
             await urls_q.put(line.strip())
 
-    print('DONE')
 
-
-async def crawl(result, session, urls_path='urls.txt', batch_size=50, n_threads=5):
+async def crawl(result, urls_path='urls.txt', batch_size=50, n_threads=5):
     '''
         Create tasks for async reading urls frome file
         and creating n_threads tasks of fetchers
@@ -70,17 +68,18 @@ async def crawl(result, session, urls_path='urls.txt', batch_size=50, n_threads=
     # Он его возвращает, доходит до await urls_q.join()
     # Но передача управления не срабатывает, потому что очередь пустая
     # Поэтому гарантировано кладём в очередь элемент при помощи while
-    while urls_q.empty():
-        print('!')
-        await asyncio.sleep(0)
+    async with aiohttp.ClientSession() as session:
+        while urls_q.empty():
+            print('!', end=' ')
+            await asyncio.sleep(0)
 
-    cache = CCache()
-    tasks = [
-        asyncio.create_task(fetch(result, session, urls_q, cache))
-        for _ in range(n_threads)
-    ]
+        cache = CCache()
+        tasks = [
+            asyncio.create_task(fetch(result, session, urls_q, cache))
+            for _ in range(n_threads)
+        ]
 
-    await urls_q.join()
+        await urls_q.join()
 
     print(f'SIZE :: {urls_q.qsize()}')
     read_task.cancel()
@@ -92,21 +91,22 @@ parser.add_argument('-c', type=int, nargs='?')
 parser.add_argument('i', type=int, nargs='?')
 parser.add_argument('f', type=str)
 
+
 async def main(n_threads=10, urls_path='urls.txt'):
-    t1 = time.perf_counter()
-    async with aiohttp.ClientSession() as session:
-        urls_data = {}
-        await crawl(
-                urls_data,
-                session,
-                urls_path=urls_path,
-                n_threads=n_threads,
-                batch_size=75
-            )
+    ''' main here '''
+    time_1 = time.perf_counter()
+
+    urls_data = {}
+    await crawl(
+            urls_data,
+            urls_path=urls_path,
+            n_threads=n_threads,
+            batch_size=75
+        )
 
     print(urls_data, len(urls_data.keys()))
-    t2 = time.perf_counter()
-    print(f"Time :: {t2 - t1}s")
+    time_2 = time.perf_counter()
+    print(f"Time :: {time_2 - time_1}s")
 
 
 if __name__ == '__main__':
