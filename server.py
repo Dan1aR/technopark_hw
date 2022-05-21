@@ -12,7 +12,7 @@ import socket
 import json
 import time
 import re
-from counter_cache import CCash
+from counter_cache import CCache
 
 def _get_words(text):
     '''
@@ -87,6 +87,7 @@ class Server():
             Every worker send result to client by himself
             After every url every worker calls _print_statisti
         '''
+        cache = CCache(top_k=k)
         while True:
             if not self.tasks_queue.empty():
                 url, client = self.tasks_queue.get()
@@ -98,12 +99,12 @@ class Server():
                     text = url_file.read().decode("utf-8")
                     text = _get_words(text)
 
-                    cache = CCash(text, k)
+                    cache.extend(text)
                     client.send(json.dumps(
                             cache.get_top_k()
                         ).encode("utf-8")
                     )
-
+                    cache.clear()
                     self._print_statistic()
 
             time.sleep(self.tick_rate)
